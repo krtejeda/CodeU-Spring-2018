@@ -38,7 +38,7 @@
       style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
 
       <h1>CodeU Chat App</h1>
-      <h2>The Avengers: CodeU Spring 2018 Team 27</h3>
+      <h2>The Avengers: CodeU Spring 2018 Team 27</h2>
       <h3>Welcome!</h3>
 
       <ul>
