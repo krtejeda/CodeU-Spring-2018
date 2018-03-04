@@ -16,7 +16,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CodeU Chat App</title>
+  <title>The Avengers</title>
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
@@ -36,34 +36,79 @@
     <div
       style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
 
-      <h1>About the CodeU Chat App</h1>
+      <h1>About Us</h1>
+      <h2>The Avengers: CodeU Spring 2018 Team 27</h2>
       <p>
-        This is an example chat application designed to be a starting point
-        for your CodeU project team work. Here's some stuff to think about:
+        We are a group of Kevin Rugg and four college students, who apparently
+        are fans of The Avengers and can't wait to see the new movies.
+        Although we are at different parts of the world, we came together to
+        make chat apps great again by using memes to communicate.
+        We believe that people express themselves best by showing memes of their
+        choices to their friends. So why bother tagging friends in memes when
+        you have a chat app specifically designed for commemenication.
+        Once again, memes are great and chat apps are awesome. Who wouldn't
+        want them both?
       </p>
 
-      <ul>
-        <li><strong>Algorithms and data structures:</strong> We've made the app
-            and the code as simple as possible. You will have to extend the
-            existing data structures to support your enhancements to the app,
-            and also make changes for performance and scalability as your app
-            increases in complexity.</li>
-        <li><strong>Look and feel:</strong> The focus of CodeU is on the Java
-          side of things, but if you're particularly interested you might use
-          HTML, CSS, and JavaScript to make the chat app prettier.</li>
-        <li><strong>Customization:</strong> Think about a group you care about.
-          What needs do they have? How could you help? Think about technical
-          requirements, privacy concerns, and accessibility and
-          internationalization.</li>
-      </ul>
+      <h2>Bio of Memers</h2>
 
-      <p>
-        This is your code now. Get familiar with it and get comfortable
-        working with your team to plan and make changes. Start by updating the
-        homepage and this about page to tell your users more about your team.
-        This page should also be used to describe the features and improvements
-        you've added.
-      </p>
+      <div>
+        <img src="./images/members/pulpitrock.jpg" class="profileImage" align="top">
+        <p>
+          <strong> Kevin Rugg - PA:</strong>
+          I've been coding at Google for ~8 years, almost all in Java.
+          10 companies before Google, mostly small startups.
+          This is my first time helping out on CodeU. My favorite Avenger is ...
+        </p>
+      </div>
+
+      <div>
+        <img src="./images/members/pulpitrock.jpg" class="profileImage" align="top">
+        <p>
+          <strong>Alexandra (Ale) Lopez:</strong> I am a sophomore
+          studying computer science at the University of Notre Dame.
+          I am from San Juan, Puerto Rico. I love to dance and I am very
+          passionate about community service. My favorite Avenger is ...
+        </p>
+      </div>
+
+       <div>
+        <img src="./images/members/pulpitrock.jpg" class="profileImage" align="top">
+        <p>
+          <strong>Elle Tojaroon:</strong> I am from Bangkok, Thailand, and
+          am a third year senior, studying computer science at
+          Cornell University. In my free time, I try to go to the gym and
+          be healthy. Unfortunately, that does not always happen.
+          I love to walk and run. When the weather is nice,
+          I go hiking and exploring the city. I also love to watch
+          TV shows and listen to audiobooks. On the weekend, I try out
+          new restaurants and fancy-looking dessert places. My favorite Avenger
+          is ....
+        </p>
+      </div>
+
+      <div>
+        <img src="./images/members/pulpitrock.jpg" class="profileImage" align="top">
+        <p>
+          <strong>Kelvin Tejeda:</strong> I'm a sophomore at Williams College.
+          I like to spend my time in nature, wearing nice shoes and eating
+          honey buns. I'm super excited to work with you guys on this project
+          and I'm even more excited to learn a ton of skills that I'll be
+          able to carry with me throughout my career in computer science.
+          My favorite Avenger is ....
+        </p>
+      </div>
+
+      <div>
+        <img src="./images/members/pulpitrock.jpg" class="profileImage" align="top">
+        <p>
+          <strong>My Nguyen:</strong>  I'm a sophomore at Bryn Mawr College.
+          I love traveling, sleeping, learning different languages and
+          listening to music (especially Kpop or Ghibli soundtracks!).
+          My favorite Avenger is ...
+        </p>
+      </div>
+
     </div>
   </div>
 </body>
