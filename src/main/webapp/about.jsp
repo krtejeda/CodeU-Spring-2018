@@ -50,30 +50,34 @@
         want them both?
       </p>
 
-      <h2>Bio of Memers</h2>
+      <h2>Bios</h2>
 
       <div>
-        <img src="./images/members/pulpitrock.jpg" class="profileImage" align="top">
+        <img src="./images/members/Kevin.jpg" class="profileImage" align="top">
         <p>
           <strong> Kevin Rugg - PA:</strong>
           I've been coding at Google for ~8 years, almost all in Java.
-          10 companies before Google, mostly small startups.
-          This is my first time helping out on CodeU. My favorite Avenger is ...
+          10 companies before Google, mostly small startups.  I grew up in Montana
+          and still enjoy the outdoors, but find coding to be a much more enjoyable
+          way to make a living than farming.  I have a 13 year old daughter who is 
+          also learning to code using github and Google AppEngine (although python).
+          This is my first time helping out on CodeU. My favorite Avenger is probably
+          Iron Man (seems like a popular choice).
         </p>
       </div>
 
       <div>
-        <img src="./images/members/pulpitrock.jpg" class="profileImage" align="top">
+        <img src="./images/members/Alexandra_Lopez.jpg" class="profileImage" align="top">
         <p>
           <strong>Alexandra (Ale) Lopez:</strong> I am a sophomore
           studying computer science at the University of Notre Dame.
           I am from San Juan, Puerto Rico. I love to dance and I am very
-          passionate about community service. My favorite Avenger is ...
+          passionate about community service. My favorite Avenger is Iron Man.
         </p>
       </div>
 
        <div>
-        <img src="./images/members/pulpitrock.jpg" class="profileImage" align="top">
+        <img src="./images/members/Elle.jpg" class="profileImage" align="top">
         <p>
           <strong>Elle Tojaroon:</strong> I am from Bangkok, Thailand, and
           am a third year senior, studying computer science at
@@ -83,29 +87,29 @@
           I go hiking and exploring the city. I also love to watch
           TV shows and listen to audiobooks. On the weekend, I try out
           new restaurants and fancy-looking dessert places. My favorite Avenger
-          is ....
+          is Iron Man.
         </p>
       </div>
 
       <div>
-        <img src="./images/members/pulpitrock.jpg" class="profileImage" align="top">
+        <img src="./images/members/Kelvin.jpg" class="profileImage" align="top">
         <p>
           <strong>Kelvin Tejeda:</strong> I'm a sophomore at Williams College.
           I like to spend my time in nature, wearing nice shoes and eating
           honey buns. I'm super excited to work with you guys on this project
           and I'm even more excited to learn a ton of skills that I'll be
           able to carry with me throughout my career in computer science.
-          My favorite Avenger is ....
+          My favorite Avenger is Thor's pants.
         </p>
       </div>
 
       <div>
-        <img src="./images/members/pulpitrock.jpg" class="profileImage" align="top">
+        <img src="./images/members/my.jpg" class="profileImage" align="top">
         <p>
           <strong>My Nguyen:</strong>  I'm a sophomore at Bryn Mawr College.
           I love traveling, sleeping, learning different languages and
           listening to music (especially Kpop or Ghibli soundtracks!).
-          My favorite Avenger is ...
+          My favorite Avenger is Iron Man.
         </p>
       </div>
 
