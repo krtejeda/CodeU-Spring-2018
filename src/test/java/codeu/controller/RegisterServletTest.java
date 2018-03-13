@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class RegisterServletTest {
-
   private RegisterServlet registerServlet;
   private HttpServletRequest mockRequest;
   private PrintWriter mockPrintWriter;
@@ -32,5 +31,4 @@ public class RegisterServletTest {
 
     Mockito.verify(mockPrintWriter).println("<h1>RegisterServlet GET request.</h1>");
   }
-
 }
