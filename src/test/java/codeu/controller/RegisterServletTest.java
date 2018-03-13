@@ -10,10 +10,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class RegisterServletTest {
+
   private RegisterServlet registerServlet;
   private HttpServletRequest mockRequest;
   private PrintWriter mockPrintWriter;
   private HttpServletResponse mockResponse;
+
 
   @Before
   public void setup() throws IOException {
