@@ -16,7 +16,6 @@ public class RegisterServletTest {
   private PrintWriter mockPrintWriter;
   private HttpServletResponse mockResponse;
 
-
   @Before
   public void setup() throws IOException {
     registerServlet = new RegisterServlet();
