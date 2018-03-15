@@ -53,6 +53,7 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
     <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
     <% } else { %>
       <a href="/login">Login</a>
+      <a href="/register">Register</a>
     <% } %>
     <a href="/about.jsp">About</a>
   </nav>
