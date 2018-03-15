@@ -69,7 +69,7 @@ public class LoginServlet extends HttpServlet {
     String username = request.getParameter("username");
     String password = request.getParameter("password");
 
-    if (!userStore.isUserRegistered(username)) {
+    if (userStore.isUserRegistered(username)) {
       User user = userStore.getUser(username);
 			if (password.equals(user.getPassword())) {
 				request.getSession().setAttribute("user", username);
