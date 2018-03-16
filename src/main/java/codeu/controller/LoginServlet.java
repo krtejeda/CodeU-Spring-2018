@@ -71,16 +71,16 @@ public class LoginServlet extends HttpServlet {
 
     if (userStore.isUserRegistered(username)) {
       User user = userStore.getUser(username);
-			if (password.equals(user.getPassword())) {
-				request.getSession().setAttribute("user", username);
-        response.sendRedirect("/conversations");
-			} else {
-				request.setAttribute("error", "Invalid password.");
-				request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
-			}
-		} else {
-			  request.setAttribute("error", "That username was not found.");
-        request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
-		}
-	}
+      if (password.equals(user.getPassword())) {
+        request.getSession().setAttribute("user", username);
+	response.sendRedirect("/conversations");
+      } else {
+	request.setAttribute("error", "Invalid password.");
+	request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
+      }
+    } else {
+      request.setAttribute("error", "That username was not found.");
+      request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
+    }
+  }
 }
