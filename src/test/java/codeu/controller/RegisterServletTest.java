@@ -48,7 +48,7 @@ public class RegisterServletTest {
   }
 
   @Test
-  public void testDoGet_ExistingUsername() throws IOException, ServletException {
+  public void testDoPost_ExistingUsername() throws IOException, ServletException {
     Mockito.when(mockRequest.getParameter("username")).thenReturn("existing username");
     UserStore mockUserStore = Mockito.mock(UserStore.class);
     Mockito.when(mockUserStore.isUserRegistered("existing username")).thenReturn(true);
@@ -61,7 +61,7 @@ public class RegisterServletTest {
   }
 
   @Test
-  public void testDoGet_NewUsername() throws IOException, ServletException {
+  public void testDoPost_NewUsername() throws IOException, ServletException {
     Mockito.when(mockRequest.getParameter("username")).thenReturn("new username");
     Mockito.when(mockRequest.getParameter("password")).thenReturn("password");
     UserStore mockUserStore = Mockito.mock(UserStore.class);
