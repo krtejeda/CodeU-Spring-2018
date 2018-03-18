@@ -77,6 +77,7 @@ public class LoginServletTest {
     loginServlet.doPost(mockRequest, mockResponse);
 
     Mockito.verify(mockRequest).setAttribute("error", "Invalid password.");
+    Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
 
   @Test
@@ -94,6 +95,7 @@ public class LoginServletTest {
     loginServlet.doPost(mockRequest, mockResponse);
 
     Mockito.verify(mockRequest).setAttribute("error", "That username was not found.");
+    Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
 
   @Test
