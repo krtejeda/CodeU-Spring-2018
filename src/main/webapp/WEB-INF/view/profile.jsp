@@ -1,11 +1,12 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: EllesMacbook
-  Date: 3/23/18
-  Time: 11:11 PM
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="codeu.model.data.Conversation" %>
+<%@ page import="java.util.List" %>
+<%@ page import="codeu.model.data.Conversation" %>
+<%@ page import="codeu.model.data.User" %>
+<%
+    List<Conversation> conversations = (List<Conversation>) request.getAttribute("conversations");
+%>
+
+<!DOCTYPE html>
 <html>
 <head>
     <title>Profile</title>
@@ -21,18 +22,35 @@
     <nav>
         <a id="navTitle" href="/">CodeU Chat App</a>
         <a href="/conversations">Conversations</a>
-        <% if (request.getSession().getAttribute("user") != null) { %>
-            <a>Your Profile Page, <%= request.getSession().getAttribute("user") %>!</a>
+        <%
+            Object user = request.getSession().getAttribute("user");
+            if (user!= null) {
+        %>
+            <a href="/profile/<%=user%>">My Profile</a>
         <% } else { %>
-            <%-- TODO(Elle) use page owner's name from url in this placeholder --%>
             <a href="/login">Login</a>
         <% } %>
     </nav>
 
     <div id="container">
         <% if (request.getSession().getAttribute("user") != null) { %>
-            <h1>About me</h1>
+            <h1>Hello, <%= request.getSession().getAttribute("user") %>!</h1>
+
+            <h2>About me</h2>
             <div>Some description</div>
+
+            <%-- TODO(Elle) show conversation link --%>
+            <div id="chat">
+                <ul>
+                    <%
+                        for (Conversation conversation : conversations) {
+                    %>
+                    <li><strong><%= conversation.getTitle() %>:</strong></li>
+                    <%
+                        }
+                    %>
+                </ul>
+            </div>
 
             <%-- TODO(Elle) show list of all conversations this person is in --%>
 
