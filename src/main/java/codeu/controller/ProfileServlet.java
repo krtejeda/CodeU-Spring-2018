@@ -9,6 +9,7 @@ import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -44,6 +45,12 @@ public class ProfileServlet extends HttpServlet {
         this.userStore = userStore;
     }
 
+    /**
+     * This function fires when a user navigates to the profile page. It gets
+     * profile owner's name from the URL, finds all conversations and messages
+     * the owner is in and sent. It then forwards the conversations, owner, and messages data
+     * to profile.jsp for rendering.
+     */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws IOException, ServletException {
@@ -60,12 +67,17 @@ public class ProfileServlet extends HttpServlet {
         List<Message> ownerMessages = getMessagesOfUser(owner, ownerConversations);
 
         request.setAttribute("conversations", ownerConversations);
-        request.setAttribute("owner", owner);
         request.setAttribute("messages", ownerMessages);
+        request.setAttribute("owner", owner);
         request.getRequestDispatcher("/WEB-INF/view/profile.jsp")
             .forward(request, response);
     }
 
+    /**
+     * Get all conversations that {@code user} has sent a message to
+     * @param user
+     * @return list of conversations {@code user} has sent a message to
+     */
     private List<Conversation> getConversationsOfUser(User user) {
         return conversationStore.getAllConversations()
             .stream()
@@ -91,6 +103,7 @@ public class ProfileServlet extends HttpServlet {
                 messageStore.getMessagesInConversation(conversation.id)
                     .stream()
                     .filter(message -> message.getAuthorId().equals(user.getId())))
+            .sorted(Comparator.comparing(Message::getCreationTime).reversed())
             .collect(Collectors.toList());
     }
 }
