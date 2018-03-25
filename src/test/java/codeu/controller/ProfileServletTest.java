@@ -31,7 +31,7 @@ public class ProfileServletTest {
     private UserStore mockUserStore;
 
     @Before
-    public void setup() throws IOException {
+    public void setup() {
         mockRequest = Mockito.mock(HttpServletRequest.class);
         mockResponse = Mockito.mock(HttpServletResponse.class);
         mockRequestDispatcher = Mockito.mock(RequestDispatcher.class);
@@ -88,6 +88,8 @@ public class ProfileServletTest {
 
         Mockito.verify(mockRequest)
             .setAttribute("conversations", conversations);
+        Mockito.verify(mockRequest)
+            .setAttribute("owner", user);
         Mockito.verify(mockRequestDispatcher)
             .forward(mockRequest, mockResponse);
     }

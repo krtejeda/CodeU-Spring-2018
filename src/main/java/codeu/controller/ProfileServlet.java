@@ -67,6 +67,7 @@ public class ProfileServlet extends HttpServlet {
                         .isPresent())
                 .collect(Collectors.toList());
         request.setAttribute("conversations", ownerConversations);
+        request.setAttribute("owner", owner);
         request.getRequestDispatcher("/WEB-INF/view/profile.jsp")
             .forward(request, response);
     }

@@ -1,24 +1,38 @@
 <%@ page import="codeu.model.data.Conversation" %>
-<%@ page import="java.util.List" %>
-<%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.data.User" %>
+<%@ page import="java.util.List" %>
 <%
-    List<Conversation> conversations = (List<Conversation>) request.getAttribute("conversations");
+List<Conversation> conversations = (List<Conversation>) request.getAttribute("conversations");
+User owner = (User) request.getAttribute("owner");
 %>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Profile</title>
+    <title><%=owner.getName() %>'s Profile</title>
     <link rel="stylesheet" href="/css/main.css">
     <style>
         label {
             display: inline-block;
             width: 100px;
         }
+
+        #chat {
+            background-color: white;
+            height: 500px;
+            overflow-y: scroll
+        }
     </style>
+
+    <script>
+      // scroll the chat div to the bottom
+      function scrollChat() {
+        var chatDiv = document.getElementById('chat');
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+      };
+    </script>
 </head>
-<body>
+<body onload="scrollChat()">
     <nav>
         <a id="navTitle" href="/">CodeU Chat App</a>
         <a href="/conversations">Conversations</a>
@@ -36,29 +50,43 @@
     </nav>
 
     <div id="container">
-        <% if (request.getSession().getAttribute("user") != null) { %>
-            <h1>Hello, <%= request.getSession().getAttribute("user") %>!</h1>
+        <%
+            if (user != null) {
+                String ownerName = owner.getName();
+                boolean isMyProfile = ownerName.equals(user);
+        %>
+            <h1>
+                <%= isMyProfile ? "My " : ownerName + "'s " %>Profile Page
+            </h1>
 
-            <h2>About me</h2>
+            <hr/>
+
+            <h2>About <%= isMyProfile ? "me" : ownerName %></h2>
             <div>Some description</div>
 
-            <%-- TODO(Elle) show conversation link --%>
-            <div id="chat">
+            <hr/>
+
+            <h2>Conversations <%= isMyProfile ? "I'm" : ownerName + "'s" %> in:</h2>
+            <div>
                 <ul>
                     <%
                         for (Conversation conversation : conversations) {
+                            String title = conversation.getTitle();
                     %>
-                    <li><strong><%= conversation.getTitle() %>:</strong></li>
+                        <li><a href="/chat/<%=title %>"><%= title %></a></li>
                     <%
                         }
                     %>
                 </ul>
             </div>
 
-            <%-- TODO(Elle) show list of all conversations this person is in --%>
+            <hr/>
 
         <% } else { %>
-            <div>Please <a href="/login">login</a> to see this profile page!</div>
+            <div>
+                <br/><br/>
+                Please <a href="/login">login</a> to see this profile page
+            </div>
         <% } %>
     </div>
 </body>
