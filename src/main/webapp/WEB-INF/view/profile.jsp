@@ -69,8 +69,8 @@ User owner = (User) request.getAttribute("owner");
             <hr/>
 
             <%-- description --%>
-            <h2>About <%= isMyProfile ? "me" : ownerName %></h2>
-            <div>Some description</div>
+            <h2>About <%= isMyProfile ? "Me" : ownerName %></h2>
+            <div><%=owner.getDescription()%></div>
 
             <hr/>
 
