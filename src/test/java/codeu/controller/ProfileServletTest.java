@@ -80,9 +80,10 @@ public class ProfileServletTest {
                 "some message content",
                 Instant.now()
             );
+        List<Message> messages = Lists.newArrayList(message);
         Mockito
             .when(mockMessageStore.getMessagesInConversation(conversation.getId()))
-            .thenReturn(Lists.newArrayList(message));
+            .thenReturn(messages);
 
         profileServlet.doGet(mockRequest, mockResponse);
 
@@ -90,6 +91,8 @@ public class ProfileServletTest {
             .setAttribute("conversations", conversations);
         Mockito.verify(mockRequest)
             .setAttribute("owner", user);
+        Mockito.verify(mockRequest)
+            .setAttribute("messages", messages);
         Mockito.verify(mockRequestDispatcher)
             .forward(mockRequest, mockResponse);
     }

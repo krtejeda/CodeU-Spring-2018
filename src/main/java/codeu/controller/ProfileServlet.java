@@ -1,12 +1,14 @@
 package codeu.controller;
 
 import codeu.model.data.Conversation;
+import codeu.model.data.Message;
 import codeu.model.data.User;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -54,21 +56,41 @@ public class ProfileServlet extends HttpServlet {
             return;
         }
 
-        // get conversations owner is in
-        // TODO(Elle) optimize this
-        List<Conversation> ownerConversations =
-            conversationStore.getAllConversations()
-                .stream()
-                .filter(conversation ->
-                    messageStore.getMessagesInConversation(conversation.id)
-                        .stream()
-                        .filter(message -> message.getAuthorId().equals(owner.getId()))
-                        .findAny()
-                        .isPresent())
-                .collect(Collectors.toList());
+        List<Conversation> ownerConversations = getConversationsOfUser(owner);
+        List<Message> ownerMessages = getMessagesOfUser(owner, ownerConversations);
+
         request.setAttribute("conversations", ownerConversations);
         request.setAttribute("owner", owner);
+        request.setAttribute("messages", ownerMessages);
         request.getRequestDispatcher("/WEB-INF/view/profile.jsp")
             .forward(request, response);
+    }
+
+    private List<Conversation> getConversationsOfUser(User user) {
+        return conversationStore.getAllConversations()
+            .stream()
+            .filter(conversation ->
+                messageStore.getMessagesInConversation(conversation.id)
+                    .stream()
+                    .filter(message -> message.getAuthorId().equals(user.getId()))
+                    .findAny()
+                    .isPresent())
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Get all messages that {@code user} sent in {@code conversations}
+     * @param user              user who sent the messages
+     * @param conversations     conversations to look for the messages
+     * @return  messages that {@code user} sent
+     */
+    private List<Message> getMessagesOfUser(User user, Collection<Conversation> conversations) {
+        return conversations
+            .stream()
+            .flatMap(conversation ->
+                messageStore.getMessagesInConversation(conversation.id)
+                    .stream()
+                    .filter(message -> message.getAuthorId().equals(user.getId())))
+            .collect(Collectors.toList());
     }
 }

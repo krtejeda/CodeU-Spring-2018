@@ -1,8 +1,14 @@
 <%@ page import="codeu.model.data.Conversation" %>
+<%@ page import="codeu.model.data.Message" %>
 <%@ page import="codeu.model.data.User" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="java.util.Locale" %>
+<%@ page import="java.time.ZoneId" %>
+<%@ page import="java.time.format.FormatStyle" %>
 <%
 List<Conversation> conversations = (List<Conversation>) request.getAttribute("conversations");
+List<Message> messages = (List<Message>) request.getAttribute("messages");
 User owner = (User) request.getAttribute("owner");
 %>
 
@@ -55,18 +61,21 @@ User owner = (User) request.getAttribute("owner");
                 String ownerName = owner.getName();
                 boolean isMyProfile = ownerName.equals(user);
         %>
+            <%-- show profile --%>
             <h1>
                 <%= isMyProfile ? "My " : ownerName + "'s " %>Profile Page
             </h1>
 
             <hr/>
 
+            <%-- description --%>
             <h2>About <%= isMyProfile ? "me" : ownerName %></h2>
             <div>Some description</div>
 
             <hr/>
 
-            <h2>Conversations <%= isMyProfile ? "I'm" : ownerName + "'s" %> in:</h2>
+            <%-- conversations --%>
+            <h2>Conversations <%= isMyProfile ? "I'm" : ownerName + "'s" %> in</h2>
             <div>
                 <ul>
                     <%
@@ -82,7 +91,30 @@ User owner = (User) request.getAttribute("owner");
 
             <hr/>
 
+            <%-- messages --%>
+            <h2><%= isMyProfile ? "My" : ownerName + "'s" %> Sent Messages</h2>
+            <div id="chat">
+                <ul>
+                    <%
+                        for (Message message : messages) {
+                            String creationTime =
+                                DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
+                                    .withZone(ZoneId.systemDefault())
+                                    .format(message.getCreationTime());
+                    %>
+                        <li>
+                            <strong><%= creationTime %>:</strong>
+                            <%= message.getContent() %></li>
+                    <%
+                        }
+                    %>
+                </ul>
+            </div>
+
+            <hr/>
+
         <% } else { %>
+            <%-- does not show profile --%>
             <div>
                 <br/><br/>
                 Please <a href="/login">login</a> to see this profile page
