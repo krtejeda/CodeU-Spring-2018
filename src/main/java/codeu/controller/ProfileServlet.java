@@ -18,6 +18,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 public class ProfileServlet extends HttpServlet {
 
@@ -105,5 +107,43 @@ public class ProfileServlet extends HttpServlet {
                     .filter(message -> message.getAuthorId().equals(user.getId())))
             .sorted(Comparator.comparing(Message::getCreationTime).reversed())
             .collect(Collectors.toList());
+    }
+
+    /**
+     * This function fires when a user submits the form to edit description on the profile page. It
+     * gets the logged-in username from the session, verifying against username from the URL. It adds
+     * the description to the user model, redirects back to the profile page.
+     */
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws IOException {
+      String requestUrl = request.getRequestURI();
+      String urlName = requestUrl.substring("/profile/".length());
+
+      String logInName = (String) request.getSession().getAttribute("user");
+      if (logInName == null || !urlName.equals(logInName)) {
+        // user is not logged in or not editing their own descriptions,
+        // don't let them add a message
+        response.sendRedirect("/login");
+        return;
+      }
+
+      User user = userStore.getUser(logInName);
+      if (user == null) {
+        // user was not found, don't let them add a message
+        response.sendRedirect("/login");
+        return;
+      }
+
+      String newDescription = request.getParameter("description");
+
+      // this removes any HTML from the description content
+      String cleanedNewDescription = Jsoup.clean(newDescription, Whitelist.none());
+
+      user.setDescription(cleanedNewDescription);
+
+
+      // redirect to a GET request
+      response.sendRedirect("/profile/" + logInName);
     }
 }

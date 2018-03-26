@@ -16,8 +16,11 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 public class ProfileServletTest {
@@ -29,6 +32,7 @@ public class ProfileServletTest {
     private ConversationStore mockConversationStore;
     private MessageStore mockMessageStore;
     private UserStore mockUserStore;
+    private HttpSession mockSession;
 
     @Before
     public void setup() {
@@ -42,7 +46,8 @@ public class ProfileServletTest {
         profileServlet.setConversationStore(mockConversationStore);
         profileServlet.setMessageStore(mockMessageStore);
         profileServlet.setUserStore(mockUserStore);
-
+        mockSession = Mockito.mock(HttpSession.class);
+        Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
         Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/profile.jsp"))
             .thenReturn(mockRequestDispatcher);
     }
@@ -95,5 +100,79 @@ public class ProfileServletTest {
             .setAttribute("messages", messages);
         Mockito.verify(mockRequestDispatcher)
             .forward(mockRequest, mockResponse);
+    }
+
+    @Test
+    public void testDoPost_OwnerEdit() throws IOException {
+      User mockOwner = Mockito.mock(User.class);
+      String ownerName = "ownerName";
+      Mockito.when(mockRequest.getRequestURI())
+          .thenReturn("/profile/" + ownerName);
+      Mockito.when(mockSession.getAttribute("user"))
+          .thenReturn(ownerName);
+      Mockito.when(mockUserStore.getUser(ownerName))
+          .thenReturn(mockOwner);
+      String newDescription = "I'm Olaf. I like warm hugs.";
+      String cleanedNewDescription = "I'm Olaf. I like warm hugs.";
+      Mockito.when(mockRequest.getParameter("description"))
+          .thenReturn(newDescription);
+      profileServlet.doPost(mockRequest, mockResponse);
+      Mockito.verify(mockOwner).setDescription(cleanedNewDescription);
+      Mockito.verify(mockResponse).sendRedirect("/profile/" + ownerName);
+    }
+
+    @Test
+    public void testDoPost_UserNotLoggedIn() throws IOException {
+      Mockito.when(mockRequest.getRequestURI())
+          .thenReturn("/profile/" + "ownerName");
+      Mockito.when(mockSession.getAttribute("user"))
+          .thenReturn(null);
+      profileServlet.doPost(mockRequest, mockResponse);
+      Mockito.verify(mockResponse).sendRedirect("/login");
+    }
+
+    @Test
+    public void testDoPost_UserNotOwner() throws IOException {
+      Mockito.when(mockRequest.getRequestURI())
+          .thenReturn("/profile/" + "ownerName");
+      Mockito.when(mockSession.getAttribute("user"))
+          .thenReturn("notOwnerName");
+      profileServlet.doPost(mockRequest, mockResponse);
+      Mockito.verify(mockResponse).sendRedirect("/login");
+    }
+
+    @Test
+    public void testDoPost_InvalidUser() throws IOException {
+      String ownerName = "ownerName";
+      Mockito.when(mockRequest.getRequestURI())
+          .thenReturn("/profile/" + ownerName);
+      Mockito.when(mockSession.getAttribute("user"))
+          .thenReturn(ownerName);
+      Mockito.when(mockUserStore.getUser(ownerName))
+          .thenReturn(null);
+      profileServlet.doPost(mockRequest, mockResponse);
+      Mockito.verify(mockResponse).sendRedirect("/login");
+    }
+
+    @Test
+    public void testDoPost_CleansHtmlContent() throws IOException {
+      User mockOwner = Mockito.mock(User.class);
+      String ownerName = "ownerName";
+      Mockito.when(mockRequest.getRequestURI())
+          .thenReturn("/profile/" + ownerName);
+      Mockito.when(mockSession.getAttribute("user"))
+          .thenReturn(ownerName);
+      Mockito.when(mockUserStore.getUser(ownerName))
+          .thenReturn(mockOwner);
+      String newDescription =
+          "<p>I'm <strong>Olaf</strong>.</p></br></br>"
+          + "<script>JavaScript</script>"
+          + "<div> I like warm hugs.</div>";
+      String cleanedNewDescription = "I'm Olaf. I like warm hugs.";
+      Mockito.when(mockRequest.getParameter("description"))
+          .thenReturn(newDescription);
+      profileServlet.doPost(mockRequest, mockResponse);
+      Mockito.verify(mockOwner).setDescription(cleanedNewDescription);
+      Mockito.verify(mockResponse).sendRedirect("/profile/" + ownerName);
     }
 }

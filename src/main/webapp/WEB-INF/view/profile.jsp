@@ -28,6 +28,11 @@ User owner = (User) request.getAttribute("owner");
             height: 500px;
             overflow-y: scroll
         }
+
+        textarea {
+            width:100%;
+            font-size: 18px;
+        }
     </style>
 
     <script>
@@ -71,6 +76,19 @@ User owner = (User) request.getAttribute("owner");
             <%-- description --%>
             <h2>About <%= isMyProfile ? "Me" : ownerName %></h2>
             <div><%=owner.getDescription()%></div>
+
+            <% if (isMyProfile) { %>
+                <h3>Edit your About Me (only you can see this)</h3>
+                <form action="/profile/<%= owner.getName() %>" method="POST">
+                    <textarea
+                        name="description"
+                        cols="100"
+                        rows="3"
+                    ><%= owner.getDescription() %></textarea>
+                    <br/>
+                    <button type="submit">Submit</button>
+                </form>
+            <% } %>
 
             <hr/>
 
