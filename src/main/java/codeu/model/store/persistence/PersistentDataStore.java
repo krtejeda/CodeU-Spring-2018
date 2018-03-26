@@ -21,8 +21,12 @@ import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -179,5 +183,25 @@ public class PersistentDataStore {
     conversationEntity.setProperty("title", conversation.getTitle());
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
     datastore.put(conversationEntity);
+  }
+
+  /**
+   * TODO(Elle) make builder pattern to generalize modification
+   * Loads User object with {@code username} from the Datastore service,
+   * set new {@code description}, and returns true if the operation is successful,
+   * false otherwise.
+   */
+  public boolean updateUserDescription(String username, String description) {
+    Filter propertyFilter =
+        new FilterPredicate("username", FilterOperator.EQUAL, username);
+    Query query = new Query("chat-users").setFilter(propertyFilter);
+    PreparedQuery pq = datastore.prepare(query);
+    Entity retrievedEntity = pq.asSingleEntity();
+    if (retrievedEntity == null) {
+      return false;
+    }
+    retrievedEntity.setProperty("description", description);
+    datastore.put(retrievedEntity);
+    return true;
   }
 }

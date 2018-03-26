@@ -7,12 +7,9 @@ import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -141,7 +138,7 @@ public class ProfileServlet extends HttpServlet {
       String cleanedNewDescription = Jsoup.clean(newDescription, Whitelist.none());
 
       user.setDescription(cleanedNewDescription);
-
+      userStore.updateUserDescription(user, cleanedNewDescription);
 
       // redirect to a GET request
       response.sendRedirect("/profile/" + logInName);
