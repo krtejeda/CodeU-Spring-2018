@@ -27,6 +27,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * This class handles all interactions with Google App Engine's Datastore service. On startup it

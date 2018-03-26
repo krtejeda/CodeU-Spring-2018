@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class RegisterServletTest {
 
@@ -63,7 +64,7 @@ public class RegisterServletTest {
   @Test
   public void testDoPost_NewUsername() throws IOException, ServletException {
     Mockito.when(mockRequest.getParameter("username")).thenReturn("new username");
-    Mockito.when(mockRequest.getParameter("password")).thenReturn("password");
+    Mockito.when(mockRequest.getParameter("password")).thenReturn(BCrypt.hashpw("password", BCrypt.gensalt()));
     UserStore mockUserStore = Mockito.mock(UserStore.class);
     Mockito.when(mockUserStore.isUserRegistered("new username")).thenReturn(false);
     registerServlet.setUserStore(mockUserStore);

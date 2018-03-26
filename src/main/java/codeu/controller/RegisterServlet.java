@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.time.Instant;
+import org.mindrot.jbcrypt.BCrypt;
+
 /**
  * Servlet class responsible for user registration.
  */
@@ -32,8 +34,8 @@ public class RegisterServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
     String username = request.getParameter("username");
-    String password = request.getParameter("password");
-    String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
+    String passwordHash = BCrypt.hashpw("password", BCrypt.gensalt());
+		/*String password = request.getParameter(passwordHash);*/
 
     if(!username.matches("[\\w*\\s*]*")) {
       request.setAttribute("error","Please enter only letters, numbers, and spaces.");

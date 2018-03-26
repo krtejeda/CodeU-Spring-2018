@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * Test class for PersistentDataStore. The PersistentDataStore class relies on DatastoreService,
@@ -40,13 +41,13 @@ public class PersistentDataStoreTest {
   public void testSaveAndLoadUsers() throws PersistentDataStoreException {
     UUID idOne = UUID.randomUUID();
     String nameOne = "test_username_one";
-    String passwordOne = "password one";
+    String passwordOne = BCrypt.hashpw("password one", BCrypt.gensalt());
     Instant creationOne = Instant.ofEpochMilli(1000);
     User inputUserOne = new User(idOne, nameOne, passwordOne, creationOne);
 
     UUID idTwo = UUID.randomUUID();
     String nameTwo = "test_username_two";
-    String passwordTwo = "password two";
+    String passwordTwo = BCrypt.hashpw("password two", BCrypt.gensalt());
     Instant creationTwo = Instant.ofEpochMilli(2000);
     User inputUserTwo = new User(idTwo, nameTwo, passwordTwo, creationTwo);
 
