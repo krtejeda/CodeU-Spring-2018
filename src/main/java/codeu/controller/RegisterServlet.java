@@ -34,8 +34,7 @@ public class RegisterServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
     String username = request.getParameter("username");
-    String passwordHash = BCrypt.hashpw("password", BCrypt.gensalt());
-		/*String password = request.getParameter(passwordHash);*/
+    String passwordHash = BCrypt.hashpw(request.getParameter("password"), BCrypt.gensalt());
 
     if(!username.matches("[\\w*\\s*]*")) {
       request.setAttribute("error", "Please enter only letters, numbers, and spaces.");
@@ -48,7 +47,6 @@ public class RegisterServlet extends HttpServlet {
       request.getRequestDispatcher("/WEB-INF/view/register.jsp").forward(request, response);
       return;
     }
-
     User user = new User(UUID.randomUUID(), username, passwordHash, Instant.now());
     userStore.addUser(user);
 
