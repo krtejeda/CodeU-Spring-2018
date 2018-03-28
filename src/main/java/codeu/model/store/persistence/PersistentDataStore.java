@@ -186,22 +186,15 @@ public class PersistentDataStore {
   }
 
   /**
-   * TODO(Elle) make builder pattern to generalize modification
+   * TODO(Elle) reference this method to the one in ...Edit.java
    * Loads User object with {@code username} from the Datastore service,
    * set new {@code description}, and returns true if the operation is successful,
    * false otherwise.
    */
   public boolean updateUserDescription(String username, String description) {
-    Filter propertyFilter =
-        new FilterPredicate("username", FilterOperator.EQUAL, username);
-    Query query = new Query("chat-users").setFilter(propertyFilter);
-    PreparedQuery pq = datastore.prepare(query);
-    Entity retrievedEntity = pq.asSingleEntity();
-    if (retrievedEntity == null) {
-      return false;
-    }
-    retrievedEntity.setProperty("description", description);
-    datastore.put(retrievedEntity);
-    return true;
+    return new UpdateUserPersistentDatastore.Builder(username)
+        .setNewDescription(description)
+        .build()
+        .update();
   }
 }
