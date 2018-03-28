@@ -14,6 +14,5 @@ public class ActivityServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
 
-    response.getWriter().println("<h1>ActivityServlet GET request.</h1>");
-  }
+  request.getRequestDispatcher("/WEB-INF/view/activity.jsp").forward(request, response);  }
 }

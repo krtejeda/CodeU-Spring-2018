@@ -1,7 +1,7 @@
 package codeu.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,22 +13,23 @@ public class ActivityServletTest {
 
   private ActivityServlet activityServlet;
   private HttpServletRequest mockRequest;
-  private PrintWriter mockPrintWriter;
   private HttpServletResponse mockResponse;
+  private RequestDispatcher mockRequestDispatcher;
 
   @Before
-  public void setup() throws IOException {
+  public void setup() {
     activityServlet = new ActivityServlet();
     mockRequest = Mockito.mock(HttpServletRequest.class);
-    mockPrintWriter = Mockito.mock(PrintWriter.class);
     mockResponse = Mockito.mock(HttpServletResponse.class);
-    Mockito.when(mockResponse.getWriter()).thenReturn(mockPrintWriter);
+    mockRequestDispatcher = Mockito.mock(RequestDispatcher.class);
+    Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/activity.jsp"))
+        .thenReturn(mockRequestDispatcher);
   }
 
   @Test
   public void testDoGet() throws IOException, ServletException {
     activityServlet.doGet(mockRequest, mockResponse);
 
-    Mockito.verify(mockPrintWriter).println("<h1>ActivityServlet GET request.</h1>");
+    Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
 }
