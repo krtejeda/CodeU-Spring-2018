@@ -1,15 +1,16 @@
 package codeu.controller;
 
+import codeu.model.data.User;
+import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import codeu.model.data.User;
-import codeu.model.store.basic.UserStore;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
@@ -62,19 +63,26 @@ public class RegisterServletTest {
 
   @Test
   public void testDoPost_NewUsername() throws IOException, ServletException {
-    Mockito.when(mockRequest.getParameter("username")).thenReturn("new username");
-    Mockito.when(mockRequest.getParameter("password")).thenReturn("password");
+    String newUsername = "new username";
+    String password = "password";
+    Mockito.when(mockRequest.getParameter("username")).thenReturn(newUsername);
+    Mockito.when(mockRequest.getParameter("password")).thenReturn(password);
+
     UserStore mockUserStore = Mockito.mock(UserStore.class);
-    Mockito.when(mockUserStore.isUserRegistered("new username")).thenReturn(false);
+    Mockito.when(mockUserStore.isUserRegistered(newUsername)).thenReturn(false);
     registerServlet.setUserStore(mockUserStore);
 
-    registerServlet.doPost(mockRequest,mockResponse);
+    registerServlet.doPost(mockRequest, mockResponse);
 
     ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
 
     Mockito.verify(mockUserStore).addUser(userArgumentCaptor.capture());
-    Assert.assertEquals(userArgumentCaptor.getValue().getName(),"new username");
-    Assert.assertEquals(userArgumentCaptor.getValue().getPassword(),"password");
+    Assert.assertEquals(
+        userArgumentCaptor.getValue().getName(),
+        newUsername);
+    Assert.assertTrue(BCrypt.checkpw(
+        password,
+        userArgumentCaptor.getValue().getPassword()));
 
     Mockito.verify(mockResponse).sendRedirect("/login");
 
