@@ -109,7 +109,10 @@ public class UserStore {
    * If so, set new description for {@code user} from persistent storage,
    * and return true if the operation is successful.
    * Otherwise, return false.
-   * @param user
+   *
+   * @param user          user whose account to update
+   * @param description   new description
+   *
    * @return true if {@code user} description gets updated. Otherwise, false.
    */
   public boolean updateUserDescription(User user, String description) {

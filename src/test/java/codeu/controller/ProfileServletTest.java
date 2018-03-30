@@ -9,7 +9,6 @@ import codeu.model.store.basic.UserStore;
 import com.google.appengine.repackaged.com.google.common.collect.Lists;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import javax.servlet.RequestDispatcher;
@@ -19,13 +18,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
+/**
+ * Test {@link ProfileServlet}
+ *
+ * @author Elle Tojaroon (etojaroo@codeustudents.com)
+ */
 public class ProfileServletTest {
 
-    private ProfileServlet profileServlet;
+    private ProfileServlet mockProfileServlet;
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
     private RequestDispatcher mockRequestDispatcher;
@@ -42,10 +44,23 @@ public class ProfileServletTest {
         mockConversationStore = Mockito.mock(ConversationStore.class);
         mockMessageStore = Mockito.mock(MessageStore.class);
         mockUserStore = Mockito.mock(UserStore.class);
-        profileServlet = new ProfileServlet();
-        profileServlet.setConversationStore(mockConversationStore);
-        profileServlet.setMessageStore(mockMessageStore);
-        profileServlet.setUserStore(mockUserStore);
+
+        // partial mock ProfileServlet because
+        // ProfileServlet.doPost() makes a call to ProfileServlet.doPost()
+        mockProfileServlet = Mockito.mock(ProfileServlet.class);
+        Mockito.doCallRealMethod()
+            .when(mockProfileServlet)
+            .setConversationStore(mockConversationStore);
+        Mockito.doCallRealMethod()
+            .when(mockProfileServlet)
+            .setMessageStore(mockMessageStore);
+        Mockito.doCallRealMethod()
+            .when(mockProfileServlet)
+            .setUserStore(mockUserStore);
+        mockProfileServlet.setConversationStore(mockConversationStore);
+        mockProfileServlet.setMessageStore(mockMessageStore);
+        mockProfileServlet.setUserStore(mockUserStore);
+
         mockSession = Mockito.mock(HttpSession.class);
         Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
         Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/profile.jsp"))
@@ -90,7 +105,10 @@ public class ProfileServletTest {
             .when(mockMessageStore.getMessagesInConversation(conversation.getId()))
             .thenReturn(messages);
 
-        profileServlet.doGet(mockRequest, mockResponse);
+        Mockito.doCallRealMethod()
+            .when(mockProfileServlet)
+            .doGet(mockRequest, mockResponse);
+        mockProfileServlet.doGet(mockRequest, mockResponse);
 
         Mockito.verify(mockRequest)
             .setAttribute("conversations", conversations);
@@ -103,7 +121,7 @@ public class ProfileServletTest {
     }
 
     @Test
-    public void testDoPost_OwnerEdit() throws IOException {
+    public void testDoPost_OwnerEdit() throws IOException, ServletException {
       User mockOwner = Mockito.mock(User.class);
       String ownerName = "ownerName";
       Mockito.when(mockRequest.getRequestURI())
@@ -116,33 +134,47 @@ public class ProfileServletTest {
       String cleanedNewDescription = "I'm Olaf. I like warm hugs.";
       Mockito.when(mockRequest.getParameter("description"))
           .thenReturn(newDescription);
-      profileServlet.doPost(mockRequest, mockResponse);
+      Mockito.when(mockUserStore.updateUserDescription(mockOwner, cleanedNewDescription))
+          .thenReturn(true);
+
+      Mockito.doCallRealMethod()
+          .when(mockProfileServlet)
+          .doPost(mockRequest, mockResponse);
+      mockProfileServlet.doPost(mockRequest, mockResponse);
       Mockito.verify(mockOwner).setDescription(cleanedNewDescription);
       Mockito.verify(mockResponse).sendRedirect("/profile/" + ownerName);
     }
 
     @Test
-    public void testDoPost_UserNotLoggedIn() throws IOException {
+    public void testDoPost_UserNotLoggedIn() throws IOException, ServletException {
       Mockito.when(mockRequest.getRequestURI())
           .thenReturn("/profile/" + "ownerName");
       Mockito.when(mockSession.getAttribute("user"))
           .thenReturn(null);
-      profileServlet.doPost(mockRequest, mockResponse);
+
+      Mockito.doCallRealMethod()
+          .when(mockProfileServlet)
+          .doPost(mockRequest, mockResponse);
+      mockProfileServlet.doPost(mockRequest, mockResponse);
       Mockito.verify(mockResponse).sendRedirect("/login");
     }
 
     @Test
-    public void testDoPost_UserNotOwner() throws IOException {
+    public void testDoPost_UserNotOwner() throws IOException, ServletException {
       Mockito.when(mockRequest.getRequestURI())
           .thenReturn("/profile/" + "ownerName");
       Mockito.when(mockSession.getAttribute("user"))
           .thenReturn("notOwnerName");
-      profileServlet.doPost(mockRequest, mockResponse);
+
+      Mockito.doCallRealMethod()
+          .when(mockProfileServlet)
+          .doPost(mockRequest, mockResponse);
+      mockProfileServlet.doPost(mockRequest, mockResponse);
       Mockito.verify(mockResponse).sendRedirect("/login");
     }
 
     @Test
-    public void testDoPost_InvalidUser() throws IOException {
+    public void testDoPost_InvalidUser() throws IOException, ServletException {
       String ownerName = "ownerName";
       Mockito.when(mockRequest.getRequestURI())
           .thenReturn("/profile/" + ownerName);
@@ -150,12 +182,16 @@ public class ProfileServletTest {
           .thenReturn(ownerName);
       Mockito.when(mockUserStore.getUser(ownerName))
           .thenReturn(null);
-      profileServlet.doPost(mockRequest, mockResponse);
+
+      Mockito.doCallRealMethod()
+          .when(mockProfileServlet)
+          .doPost(mockRequest, mockResponse);
+      mockProfileServlet.doPost(mockRequest, mockResponse);
       Mockito.verify(mockResponse).sendRedirect("/login");
     }
 
     @Test
-    public void testDoPost_CleansHtmlContent() throws IOException {
+    public void testDoPost_CleansHtmlContent() throws IOException, ServletException {
       User mockOwner = Mockito.mock(User.class);
       String ownerName = "ownerName";
       Mockito.when(mockRequest.getRequestURI())
@@ -171,8 +207,42 @@ public class ProfileServletTest {
       String cleanedNewDescription = "I'm Olaf. I like warm hugs.";
       Mockito.when(mockRequest.getParameter("description"))
           .thenReturn(newDescription);
-      profileServlet.doPost(mockRequest, mockResponse);
+      Mockito.when(mockUserStore.updateUserDescription(mockOwner, cleanedNewDescription))
+          .thenReturn(true);
+
+      Mockito.doCallRealMethod()
+          .when(mockProfileServlet)
+          .doPost(mockRequest, mockResponse);
+      mockProfileServlet.doPost(mockRequest, mockResponse);
       Mockito.verify(mockOwner).setDescription(cleanedNewDescription);
       Mockito.verify(mockResponse).sendRedirect("/profile/" + ownerName);
     }
+
+  @Test
+  public void testDoPost_UpdateDescriptionFails() throws IOException, ServletException {
+    User mockOwner = Mockito.mock(User.class);
+    String ownerName = "ownerName";
+    Mockito.when(mockRequest.getRequestURI())
+        .thenReturn("/profile/" + ownerName);
+    Mockito.when(mockSession.getAttribute("user"))
+        .thenReturn(ownerName);
+    Mockito.when(mockUserStore.getUser(ownerName))
+        .thenReturn(mockOwner);
+    String newDescription = "I'm Olaf. I like warm hugs.";
+    String cleanedNewDescription = "I'm Olaf. I like warm hugs.";
+    Mockito.when(mockRequest.getParameter("description"))
+        .thenReturn(newDescription);
+    Mockito.when(mockUserStore.updateUserDescription(mockOwner, cleanedNewDescription))
+        .thenReturn(false);
+
+    Mockito.doCallRealMethod()
+        .when(mockProfileServlet)
+        .doPost(mockRequest, mockResponse);
+    mockProfileServlet.doPost(mockRequest, mockResponse);
+    Mockito.verify(mockOwner).setDescription(cleanedNewDescription);
+    Mockito.verify(mockResponse, Mockito.never()).sendRedirect("/profile/" + ownerName);
+    Mockito.verify(mockRequest).setAttribute("updateDescriptionError",
+        "Failed to update your description. Please try again later.");
+    Mockito.verify(mockProfileServlet).doGet(mockRequest, mockResponse);
+  }
 }

@@ -103,7 +103,9 @@ public class PersistentStorageAgent {
     persistentDataStore.writeThrough(message);
   }
 
-  /** Modify User's description */
+  /**
+   * Modify User's description
+   */
   public boolean updateUserDescription(String username, String description) {
     return persistentDataStore.updateUserDescription(username, description);
   }

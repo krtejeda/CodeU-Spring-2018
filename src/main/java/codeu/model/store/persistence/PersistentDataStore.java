@@ -186,13 +186,10 @@ public class PersistentDataStore {
   }
 
   /**
-   * TODO(Elle) reference this method to the one in ...Edit.java
-   * Loads User object with {@code username} from the Datastore service,
-   * set new {@code description}, and returns true if the operation is successful,
-   * false otherwise.
+   * Modify User's description
    */
   public boolean updateUserDescription(String username, String description) {
-    return new UpdateUserPersistentDatastore.Builder(username)
+    return new UpdateUserPersistentDatastore.Builder(datastore, username)
         .setNewDescription(description)
         .build()
         .update();

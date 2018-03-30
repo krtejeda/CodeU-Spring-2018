@@ -9,6 +9,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import java.util.Optional;
 
 /**
  * This class handles all update operations to {@link User}
@@ -22,15 +23,16 @@ public class UpdateUserPersistentDatastore {
   private DatastoreService datastore;
 
   private final String currentUsername;
-  private final String newUsername;
-  private final String newPassword;
-  private final String newDescription;
+  private final Optional<String> newUsername;
+  private final Optional<String> newPassword;
+  private final Optional<String> newDescription;
 
   /**
    * Sets up required and optional fields for {@link UpdateUserPersistentDatastore} to be updated.
    */
   public static class Builder {
-    // Optional parameter
+    // Required parameter
+    private DatastoreService datastore;
     private String currentUsername;
 
     // Optional parameters. Default is set to null.
@@ -38,7 +40,8 @@ public class UpdateUserPersistentDatastore {
     private String newPassword;
     private String newDescription;
 
-    public Builder(String currentUsername) {
+    public Builder(DatastoreService datastore, String currentUsername) {
+      this.datastore = datastore;
       this.currentUsername = currentUsername;
     }
 
@@ -67,11 +70,11 @@ public class UpdateUserPersistentDatastore {
    * Datastore service.
    */
   private UpdateUserPersistentDatastore(Builder builder) {
-    datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore = builder.datastore;
     currentUsername = builder.currentUsername;
-    newUsername = builder.newUsername;
-    newPassword = builder.newPassword;
-    newDescription = builder.newDescription;
+    newUsername = Optional.ofNullable(builder.newUsername);
+    newPassword = Optional.ofNullable(builder.newPassword);
+    newDescription = Optional.ofNullable(builder.newDescription);
   }
 
   /**
@@ -88,14 +91,14 @@ public class UpdateUserPersistentDatastore {
     if (retrievedEntity == null) {
       return false;
     }
-    if (newUsername != null) {
-      retrievedEntity.setProperty("username", newUsername);
+    if (newUsername.isPresent()) {
+      retrievedEntity.setProperty("username", newUsername.get());
     }
-    if (newPassword != null) {
-      retrievedEntity.setProperty("password", newPassword);
+    if (newPassword.isPresent()) {
+      retrievedEntity.setProperty("password", newPassword.get());
     }
-    if (newDescription != null) {
-      retrievedEntity.setProperty("description", newDescription);
+    if (newDescription.isPresent()) {
+      retrievedEntity.setProperty("description", newDescription.get());
     }
     datastore.put(retrievedEntity);
     return true;

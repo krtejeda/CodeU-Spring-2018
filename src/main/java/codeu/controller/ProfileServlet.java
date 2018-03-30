@@ -18,6 +18,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
+/**
+ * Servlet class responsible for individual profile page
+ *
+ * @author Elle Tojaroon (etojaroo@codeustudents.com)
+ */
 public class ProfileServlet extends HttpServlet {
 
     private ConversationStore conversationStore;
@@ -113,7 +118,7 @@ public class ProfileServlet extends HttpServlet {
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws IOException {
+        throws IOException, ServletException {
       String requestUrl = request.getRequestURI();
       String urlName = requestUrl.substring("/profile/".length());
 
@@ -138,9 +143,15 @@ public class ProfileServlet extends HttpServlet {
       String cleanedNewDescription = Jsoup.clean(newDescription, Whitelist.none());
 
       user.setDescription(cleanedNewDescription);
-      userStore.updateUserDescription(user, cleanedNewDescription);
-
-      // redirect to a GET request
-      response.sendRedirect("/profile/" + logInName);
+      if (userStore.updateUserDescription(user, cleanedNewDescription)) {
+        // redirect to a GET request
+        response.sendRedirect("/profile/" + logInName);
+      } else {
+        // alert or something
+        request.setAttribute(
+            "updateDescriptionError",
+            "Failed to update your description. Please try again later.");
+        doGet(request, response);
+      }
     }
 }

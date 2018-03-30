@@ -5,6 +5,7 @@ import codeu.model.data.Message;
 import codeu.model.data.User;
 import java.time.Instant;
 import java.util.UUID;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -66,5 +67,25 @@ public class PersistentStorageAgentTest {
             UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "test content", Instant.now());
     persistentStorageAgent.writeThrough(message);
     Mockito.verify(mockPersistentDataStore).writeThrough(message);
+  }
+
+  @Test
+  public void testUpdateUserDescription_successful() {
+    String username = "username";
+    String newDescription = "description";
+    Mockito.when(mockPersistentDataStore.updateUserDescription(username, newDescription))
+        .thenReturn(true);
+    Assert.assertTrue(persistentStorageAgent.updateUserDescription(username, newDescription));
+    Mockito.verify(mockPersistentDataStore).updateUserDescription(username, newDescription);
+  }
+
+  @Test
+  public void testUpdateUserDescription_failed() {
+    String username = "username";
+    String newDescription = "description";
+    Mockito.when(mockPersistentDataStore.updateUserDescription(username, newDescription))
+        .thenReturn(false);
+    Assert.assertFalse(persistentStorageAgent.updateUserDescription(username, newDescription));
+    Mockito.verify(mockPersistentDataStore).updateUserDescription(username, newDescription);
   }
 }

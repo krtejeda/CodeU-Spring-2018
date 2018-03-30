@@ -3,9 +3,7 @@
 <%@ page import="codeu.model.data.User" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
-<%@ page import="java.util.Locale" %>
 <%@ page import="java.time.ZoneId" %>
-<%@ page import="java.time.format.FormatStyle" %>
 <%
 List<Conversation> conversations = (List<Conversation>) request.getAttribute("conversations");
 List<Message> messages = (List<Message>) request.getAttribute("messages");
@@ -86,7 +84,14 @@ User owner = (User) request.getAttribute("owner");
                         rows="3"
                     ><%= owner.getDescription() %></textarea>
                     <br/>
-                    <button type="submit">Submit</button>
+                    <div style="overflow: hidden">
+                        <button type="submit" style="float: left">Submit</button>
+                        <% if(request.getAttribute("updateDescriptionError") != null) { %>
+                            <div style="color:red; padding-left: 85px;">
+                                <%= request.getAttribute("updateDescriptionError") %>
+                            </div>
+                        <% } %>
+                    </div>
                 </form>
             <% } %>
 
