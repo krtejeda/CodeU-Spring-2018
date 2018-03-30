@@ -10,6 +10,7 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.util.Optional;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * This class handles all update operations to {@link User}
@@ -45,16 +46,31 @@ public class UpdateUserPersistentDatastore {
       this.currentUsername = currentUsername;
     }
 
+    /**
+     * Sets username field to {@code newUsername}
+     * @param newUsername   new username to set
+     * @return  this Builder
+     */
     public Builder setNewUsername(String newUsername) {
       this.newUsername = newUsername;
       return this;
     }
 
+    /**
+     * Sets password field to {@code newPassword} encrypted
+     * @param newPassword   new password to encrypt and set
+     * @return  this Builder
+     */
     public Builder setNewPassword(String newPassword) {
-      this.newPassword = newPassword;
+      this.newPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
       return this;
     }
 
+    /**
+     * Sets description field to {@code newDescription} encrypted
+     * @param newDescription   new description to encrypt and set
+     * @return  this Builder
+     */
     public Builder setNewDescription(String newDescription) {
       this.newDescription = newDescription;
       return this;
