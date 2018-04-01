@@ -15,9 +15,6 @@
 package codeu.model.data;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 /** Class representing a registered user. */

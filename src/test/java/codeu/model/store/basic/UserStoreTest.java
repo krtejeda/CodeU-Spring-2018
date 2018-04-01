@@ -95,11 +95,14 @@ public class UserStoreTest {
             Instant.now());
     String newDescription = "new description";
     userStore = Mockito.mock(UserStore.class);
-    Mockito.when(userStore.isUserRegistered(fakeUser.getName()))
+    Mockito
+        .when(userStore.isUserRegistered(fakeUser.getName()))
         .thenReturn(false);
-    Mockito.when(userStore.updateUserDescription(
-        fakeUser,
-        newDescription))
+    Mockito
+        .when(
+            userStore.updateUserDescription(
+                fakeUser,
+                newDescription))
         .thenCallRealMethod();
     Assert.assertFalse(userStore.updateUserDescription(
         fakeUser,
@@ -109,13 +112,15 @@ public class UserStoreTest {
   @Test
   public void testUpdateUserDescription_updateSucessful() {
     String newDescription = "new description";
-    Mockito.when(
-        mockPersistentStorageAgent.updateUserDescription(USER_ONE.getName(), newDescription))
+    Mockito
+        .when(
+            mockPersistentStorageAgent.updateUserDescription(USER_ONE.getName(), newDescription))
         .thenReturn(true);
 
-    Assert.assertTrue(userStore.updateUserDescription(
-        USER_ONE,
-        newDescription));
+    Assert.assertTrue(
+        userStore.updateUserDescription(
+            USER_ONE,
+            newDescription));
     Mockito.verify(mockPersistentStorageAgent)
         .updateUserDescription(USER_ONE.getName(), newDescription);
   }
@@ -123,13 +128,15 @@ public class UserStoreTest {
   @Test
   public void testUpdateUserDescription_updateFailed() {
     String newDescription = "new description";
-    Mockito.when(
-        mockPersistentStorageAgent.updateUserDescription(USER_ONE.getName(), newDescription))
+    Mockito
+        .when(
+            mockPersistentStorageAgent.updateUserDescription(USER_ONE.getName(), newDescription))
         .thenReturn(false);
 
-    Assert.assertFalse(userStore.updateUserDescription(
-        USER_ONE,
-        newDescription));
+    Assert.assertFalse(
+        userStore.updateUserDescription(
+            USER_ONE,
+            newDescription));
     Mockito.verify(mockPersistentStorageAgent)
         .updateUserDescription(USER_ONE.getName(), newDescription);
   }
