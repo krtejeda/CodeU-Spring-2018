@@ -32,6 +32,7 @@
     <a href="/about.jsp">About</a>
     <a href="/register">Register</a>
     <a href="/testdata">Load Test Data</a>
+    <a href="/users">Users</a>
   </nav>
 
   <div id="container">

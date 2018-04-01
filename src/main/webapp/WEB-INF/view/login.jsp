@@ -26,7 +26,7 @@
   </style>
 </head>
 <body>
-  
+
   <nav>
     <a id="navTitle" href="/">CodeU Chat App</a>
     <a href="/conversations">Conversations</a>
@@ -35,6 +35,7 @@
     <% } else{ %>
       <a href="/login">Login</a>
       <a href="/register">Register</a>
+      <a href="/users">Users</a>
     <% } %>
     <a href="/about.jsp">About</a>
   </nav>

@@ -29,6 +29,7 @@
     <% } else{ %>
       <a href="/login">Login</a>
       <a href="/register">Register</a>
+      <a href="/users">Users</a>
     <% } %>
     <a href="/about.jsp">About</a>
   </nav>
@@ -60,7 +61,7 @@
           I've been coding at Google for ~8 years, almost all in Java.
           10 companies before Google, mostly small startups.  I grew up in Montana
           and still enjoy the outdoors, but find coding to be a much more enjoyable
-          way to make a living than farming.  I have a 13 year old daughter who is 
+          way to make a living than farming.  I have a 13 year old daughter who is
           also learning to code using github and Google AppEngine (although python).
           This is my first time helping out on CodeU. My favorite Avenger is probably
           Iron Man (seems like a popular choice).

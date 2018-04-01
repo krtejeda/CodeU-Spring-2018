@@ -32,6 +32,7 @@
     <% } else{ %>
       <a href="/login">Login</a>
       <a href="/register">Register</a>
+      <a href="/users">Users</a>
     <% } %>
     <a href="/about.jsp">About</a>
   </nav>
