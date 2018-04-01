@@ -19,6 +19,7 @@
       <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
     <% } else { %>
       <a href="/login">Login</a>
+      <a href="/users">Users</a>
     <% } %>
   </nav>
 
