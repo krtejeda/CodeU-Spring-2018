@@ -21,8 +21,12 @@ import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +72,10 @@ public class PersistentDataStore {
         String password = (String) entity.getProperty("password");
         String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        User user = new User(uuid, userName, passwordHash, creationTime);
+        String description = entity.getProperty("description") != null ?
+            (String) entity.getProperty("description") :
+            User.getDefaultDescription(userName);
+        User user = new User(uuid, userName, password, creationTime, description);
         users.add(user);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -155,6 +162,7 @@ public class PersistentDataStore {
     userEntity.setProperty("username", user.getName());
     userEntity.setProperty("password", user.getPassword());
     userEntity.setProperty("creation_time", user.getCreationTime().toString());
+    userEntity.setProperty("description", user.getDescription().toString());
     datastore.put(userEntity);
   }
 
@@ -177,5 +185,15 @@ public class PersistentDataStore {
     conversationEntity.setProperty("title", conversation.getTitle());
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
     datastore.put(conversationEntity);
+  }
+
+  /**
+   * Modify User's description
+   */
+  public boolean updateUserDescription(String username, String description) {
+    return new UpdateUserPersistentDatastore.Builder(datastore, username)
+        .setNewDescription(description)
+        .build()
+        .update();
   }
 }

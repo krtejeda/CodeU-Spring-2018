@@ -49,7 +49,8 @@ public class PersistentDataStoreTest {
     String nameTwo = "test_username_two";
     String passwordTwo = BCrypt.hashpw("password two", BCrypt.gensalt());
     Instant creationTwo = Instant.ofEpochMilli(2000);
-    User inputUserTwo = new User(idTwo, nameTwo, passwordTwo, creationTwo);
+    String descriptionTwo = "description two";
+    User inputUserTwo = new User(idTwo, nameTwo, passwordTwo, creationTwo, descriptionTwo);
 
     // save
     persistentDataStore.writeThrough(inputUserOne);
@@ -64,12 +65,15 @@ public class PersistentDataStoreTest {
     Assert.assertEquals(nameOne, resultUserOne.getName());
     Assert.assertTrue(BCrypt.checkpw(passwordOne, resultUserOne.getPassword()));
     Assert.assertEquals(creationOne, resultUserOne.getCreationTime());
+    Assert.assertEquals(User.getDefaultDescription(nameOne), resultUserOne.getDescription());
 
     User resultUserTwo = resultUsers.get(1);
     Assert.assertEquals(idTwo, resultUserTwo.getId());
     Assert.assertEquals(nameTwo, resultUserTwo.getName());
     Assert.assertTrue(BCrypt.checkpw(passwordTwo, resultUserTwo.getPassword()));
     Assert.assertEquals(creationTwo, resultUserTwo.getCreationTime());
+    Assert.assertEquals(descriptionTwo, resultUserTwo.getDescription());
+
   }
 
   @Test
