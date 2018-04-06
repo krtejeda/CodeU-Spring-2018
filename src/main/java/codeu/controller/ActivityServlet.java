@@ -19,8 +19,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import java.util.Comparator;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
-/** Servlet class responsible for the Activity Feed. */
+/** Servlet class responsible for the Activity Feed.
+ * @author Kelvin Tejeda (ktejeda@codeustudents.com)
+ */
 public class ActivityServlet extends HttpServlet {
 
   /** Store class that gives access to Conversations. */
@@ -67,8 +70,8 @@ public class ActivityServlet extends HttpServlet {
 
   /**
    * This function fires when a user navigates to the Activity page. It gets the conversations, messages,
-	 * and users from their respective stores and sorts them into one list by the most recent creation time.
-	 * It then forwards that list to activity.jsp in order to render it.
+   * and users from their respective stores and sorts them into one list by the most recent creation time.
+   * It then forwards that list to activity.jsp in order to render it.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -77,37 +80,32 @@ public class ActivityServlet extends HttpServlet {
     List<Message> messages = messageStore.getAllMessages();
     List<User> users = userStore.getAllUsers();
 
-    List<Object> activity = new ArrayList<>();
+    List<Object> activity = sortByCreationTime(conversations, messages, users);
 
-    int c = conversations.size() - 1;
-    int m = messages.size() - 1;
-    int u = users.size() - 1;
-
-    while ((c >= 0) || (m >= 0) || (u >= 0)) {
-      if ((c == -1 && u == -1) ||
-          (c == -1 && m != -1 && u != -1 && messages.get(m).getCreationTime().isAfter(users.get(u).getCreationTime())) ||
-          (u == -1 && m != -1 && c != -1 && messages.get(m).getCreationTime().isAfter(conversations.get(c).getCreationTime())) ||
-          (c != -1 && m != -1 && u != -1 && messages.get(m).getCreationTime().isAfter(conversations.get(c).getCreationTime()) &&
-             messages.get(m).getCreationTime().isAfter(users.get(u).getCreationTime()))) {
-        activity.add(messages.get(m));
-        m--;
-      } else if ((c == -1 && m == -1) ||
-       	         (c == -1 && u != -1 && m != -1 && users.get(u).getCreationTime().isAfter(messages.get(m).getCreationTime())) ||
-                 (m == -1 && u != -1 && c != -1 && users.get(u).getCreationTime().isAfter(conversations.get(c).getCreationTime())) ||
-                 (c != -1 && m != -1 && u != -1 && users.get(u).getCreationTime().isAfter(conversations.get(c).getCreationTime()) &&
-                    users.get(u).getCreationTime().isAfter(messages.get(m).getCreationTime()))) {
-        activity.add(users.get(u));
-        u--;
-      } else if ((u == -1 && m == -1) ||
-                 (u == -1 && c != -1 && m != -1 && conversations.get(c).getCreationTime().isAfter(messages.get(m).getCreationTime())) ||
-                 (m == -1 && c != -1 && u != -1 && conversations.get(c).getCreationTime().isAfter(users.get(u).getCreationTime())) ||
-                 (c != -1 && m != -1 && u != -1 && conversations.get(c).getCreationTime().isAfter(users.get(u).getCreationTime()) &&
-                    conversations.get(c).getCreationTime().isAfter(messages.get(m).getCreationTime()))) {
-        activity.add(conversations.get(c));
-        c--;
-      }
-    }
     request.setAttribute("activity", activity);
     request.getRequestDispatcher("/WEB-INF/view/activity.jsp").forward(request, response);
+  }
+
+  private List<Object> sortByCreationTime(List<Conversation> conversations, List<Message> messages, List<User> users) {
+    List<Object> activity = new ArrayList<>();
+    activity.addAll(conversations);
+    activity.addAll(messages);
+    activity.addAll(users);
+    Comparator<Object> byCreationDate = Comparator.comparing(o -> getCreationDate(o)).reversed();
+    return activity.stream().sorted(byCreationDate).collect(Collectors.toList());
+  }
+
+  private Instant getCreationDate(Object object) {
+    if (object.getClass() == Conversation.class) {
+      Conversation conversation = (Conversation) object;
+      return conversation.getCreationTime();
+    } else if (object.getClass() == Message.class) {
+      Message message = (Message) object;
+      return message.getCreationTime();
+    } else if (object.getClass() == User.class) {
+      User user = (User) object;
+      return user.getCreationTime();
+    }
+    return null;
   }
 }

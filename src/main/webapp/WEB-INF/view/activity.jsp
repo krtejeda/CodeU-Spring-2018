@@ -50,9 +50,9 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
       <a href="/login">Login</a>
       <a href="/register">Register</a>
     <% } %>
-		<a href="/about.jsp">About</a>
-		<a href="/activity">Activity</a>
-		<a href="/testdata">Load Test Data</a>
+      <a href="/about.jsp">About</a>
+      <a href="/activity">Activity</a>
+      <a href="/testdata">Load Test Data</a>
   </nav>
 
   <div id="container">
@@ -92,11 +92,11 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
           String creationTime = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
             .withZone(ZoneId.systemDefault())
             .format(message.getCreationTime());
-					String conversation = ConversationStore.getInstance()
-					  .getConversationWithUUID(message.getConversationId()).getTitle();
+          String conversation = ConversationStore.getInstance()
+            .getConversationWithUUID(message.getConversationId()).getTitle();
       %>
         <strong><%= creationTime %>:</strong> <%= author %> sent a message
-				  in <a href="/chat/<%=conversation%>"> <%= conversation %></a>: "<%= message.getContent() %>"
+          in <a href="/chat/<%=conversation%>"> <%= conversation %></a>: "<%= message.getContent() %>"
       <% } %>
         </li>
     <% } %>

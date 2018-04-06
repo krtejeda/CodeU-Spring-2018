@@ -44,11 +44,11 @@ public class ActivityServletTest {
     Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/activity.jsp"))
         .thenReturn(mockRequestDispatcher);
 
-		mockConversationStore = Mockito.mock(ConversationStore.class);
-		activityServlet.setConversationStore(mockConversationStore);
+    mockConversationStore = Mockito.mock(ConversationStore.class);
+    activityServlet.setConversationStore(mockConversationStore);
 
-		mockMessageStore = Mockito.mock(MessageStore.class);
-		activityServlet.setMessageStore(mockMessageStore);
+    mockMessageStore = Mockito.mock(MessageStore.class);
+    activityServlet.setMessageStore(mockMessageStore);
 
     mockUserStore = Mockito.mock(UserStore.class);
     activityServlet.setUserStore(mockUserStore);
@@ -56,43 +56,40 @@ public class ActivityServletTest {
 
   @Test
   public void testDoGet() throws IOException, ServletException {
-		List<Conversation> fakeConversationList = new ArrayList<>();
-		fakeConversationList.add(
-				new Conversation(
-				    UUID.randomUUID(),
-						UUID.randomUUID(),
-						"test_conversation",
-						Instant.now());
+
+    List<Conversation> fakeConversationList = new ArrayList<>();
+    fakeConversationList.add(
+       	new Conversation(
+            UUID.randomUUID(),
+       	    UUID.randomUUID(),
+       	    "test_conversation",
+       	    Instant.now()));
     Mockito.when(mockConversationStore.getAllConversations()).thenReturn(fakeConversationList);
 
-		List<Message> fakeMessageList = new ArrayList<>();
-		fakeMessageList.add(
+    List<Message> fakeMessageList = new ArrayList<>();
+    fakeMessageList.add(
         new Message(
             UUID.randomUUID(),
             UUID.randomUUID(),
             UUID.randomUUID(),
             "test message",
             Instant.now()));
-		Mockito.when(mockMessageStore.getAllMessages()).thenReturn(fakeMessageList);
+    Mockito.when(mockMessageStore.getAllMessages()).thenReturn(fakeMessageList);
 
-		List<User> fakeUserList = new ArrayList<>();
-		fakeUserList.add(
-				new User(
-				    UUID.randomUUID(),
-				    "test username",
-				    "test password",
-						Instant.now()));
-		Mockito.when(mockUserStore.getAllUsers()).thenReturn(fakeUserList);
+    List<User> fakeUserList = new ArrayList<>();
+    fakeUserList.add(
+        new User(
+            UUID.randomUUID(),
+	    "test username",
+	    "test password",
+            Instant.now()));
+    Mockito.when(mockUserStore.getAllUsers()).thenReturn(fakeUserList);
 
-		List<Object> fakeAllList = new ArrayList<>();
-
-		int c = fakeConversationList.size() - 1;
-    int m = fakeMessageList.size() - 1;
-    int u = fakeUserList.size() - 1;
+    List<Object> fakeActivityList = new ArrayList<>();
 
     activityServlet.doGet(mockRequest, mockResponse);
 
-    Mockito.verify(mockRequest).setAttribute("all", fakeAllList)
+    Mockito.verify(mockRequest).setAttribute("activity", fakeActivityList);
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
 }

@@ -114,7 +114,7 @@ public class ConversationStore {
     return null;
   }
 
-	/** Find and return the Conversation with the given UUID. */
+  /** Find and return the Conversation with the given UUID. */
   public Conversation getConversationWithUUID(UUID id) {
     for (Conversation conversation : conversations) {
       if (conversation.getId().equals(id)) {
