@@ -22,7 +22,7 @@ import org.mindrot.jbcrypt.BCrypt;
 public class User {
   private final UUID id;
   private final String name;
-  private final String password;
+  private String password;
   private final Instant creation;
   private String description;
 
@@ -71,6 +71,9 @@ public class User {
   public String getPassword() {
     return password;
   }
+
+  /** Sets password of this User. */
+  public void setPassword(String password) { this.password = password; }
 
   /** Returns the creation time of this User. */
   public Instant getCreationTime() {
