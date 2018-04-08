@@ -41,16 +41,18 @@ public class PersistentDataStoreTest {
   public void testSaveAndLoadUsers() throws PersistentDataStoreException {
     UUID idOne = UUID.randomUUID();
     String nameOne = "test_username_one";
-    String passwordOne = BCrypt.hashpw("password one", BCrypt.gensalt());
+    String passwordOne = "password one";
+    String passwordOneHash = BCrypt.hashpw(passwordOne, BCrypt.gensalt());
     Instant creationOne = Instant.ofEpochMilli(1000);
-    User inputUserOne = new User(idOne, nameOne, passwordOne, creationOne);
+    User inputUserOne = new User(idOne, nameOne, passwordOneHash, creationOne);
 
     UUID idTwo = UUID.randomUUID();
     String nameTwo = "test_username_two";
-    String passwordTwo = BCrypt.hashpw("password two", BCrypt.gensalt());
+    String passwordTwo = "password two";
+    String passwordTwoHash = BCrypt.hashpw(passwordTwo, BCrypt.gensalt());
     Instant creationTwo = Instant.ofEpochMilli(2000);
     String descriptionTwo = "description two";
-    User inputUserTwo = new User(idTwo, nameTwo, passwordTwo, creationTwo, descriptionTwo);
+    User inputUserTwo = new User(idTwo, nameTwo, passwordTwoHash, creationTwo, descriptionTwo);
 
     // save
     persistentDataStore.writeThrough(inputUserOne);
