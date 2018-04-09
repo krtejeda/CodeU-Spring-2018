@@ -56,7 +56,7 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
   </nav>
 
   <div id="container">
-    <h1>Activity</h1>
+    <h1>Activity <a href="" style="float: right">&#8635;</a> </h1>
     <p>Here's everything that's happened on the site so far!</p>
     <div id="chat">
       <ul>

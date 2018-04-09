@@ -1,4 +1,3 @@
-/*
 package codeu.controller;
 
 import codeu.model.data.Conversation;
@@ -55,16 +54,14 @@ public class ActivityServletTest {
   }
 
   @Test
-  public void testDoGet() throws IOException, ServletException {
-
+  public void testDoGet_AllNotEmpty() throws IOException, ServletException {
     List<Conversation> fakeConversationList = new ArrayList<>();
     fakeConversationList.add(
-       	new Conversation(
+        new Conversation(
             UUID.randomUUID(),
-       	    UUID.randomUUID(),
-       	    "test_conversation",
-       	    Instant.now()));
-    Mockito.when(mockConversationStore.getAllConversations()).thenReturn(fakeConversationList);
+            UUID.randomUUID(),
+            "test_conversation",
+            Instant.now().plusSeconds(1)));
 
     List<Message> fakeMessageList = new ArrayList<>();
     fakeMessageList.add(
@@ -73,24 +70,205 @@ public class ActivityServletTest {
             UUID.randomUUID(),
             UUID.randomUUID(),
             "test message",
-            Instant.now()));
-    Mockito.when(mockMessageStore.getAllMessages()).thenReturn(fakeMessageList);
+            Instant.now().plusSeconds(2)));
 
     List<User> fakeUserList = new ArrayList<>();
     fakeUserList.add(
         new User(
             UUID.randomUUID(),
-	    "test username",
-	    "test password",
-            Instant.now()));
+            "test username",
+            "test password",
+            Instant.now().plusSeconds(3)));
+
+    Mockito.when(mockConversationStore.getAllConversations()).thenReturn(fakeConversationList);
+    Mockito.when(mockMessageStore.getAllMessages()).thenReturn(fakeMessageList);
     Mockito.when(mockUserStore.getAllUsers()).thenReturn(fakeUserList);
 
-    List<Object> fakeActivityList = new ArrayList<>();
+    // The order the objects should be in
+		List<Object> fakeActivityList = new ArrayList<>();
+		fakeActivityList.addAll(fakeUserList);
+		fakeActivityList.addAll(fakeMessageList);
+		fakeActivityList.addAll(fakeConversationList);
 
     activityServlet.doGet(mockRequest, mockResponse);
 
     Mockito.verify(mockRequest).setAttribute("activity", fakeActivityList);
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
+
+  @Test
+  public void testDoGet_ConversationEmpty() throws IOException, ServletException {
+    List<Conversation> fakeConversationList = new ArrayList<>();
+
+    List<Message> fakeMessageList = new ArrayList<>();
+    fakeMessageList.add(
+        new Message(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            "test message",
+            Instant.now().plusSeconds(2)));
+
+    List<User> fakeUserList = new ArrayList<>();
+    fakeUserList.add(
+        new User(
+            UUID.randomUUID(),
+            "test username",
+            "test password",
+            Instant.now().plusSeconds(3)));
+
+    Mockito.when(mockConversationStore.getAllConversations()).thenReturn(fakeConversationList);
+    Mockito.when(mockMessageStore.getAllMessages()).thenReturn(fakeMessageList);
+    Mockito.when(mockUserStore.getAllUsers()).thenReturn(fakeUserList);
+
+		// The order the objects should be in
+		List<Object> fakeActivityList = new ArrayList<>();
+		fakeActivityList.addAll(fakeUserList);
+		fakeActivityList.addAll(fakeMessageList);
+		fakeActivityList.addAll(fakeConversationList);
+
+    activityServlet.doGet(mockRequest, mockResponse);
+
+    Mockito.verify(mockRequest).setAttribute("activity", fakeActivityList);
+    Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
+  }
+
+  @Test
+  public void testDoGet_MessageEmpty() throws IOException, ServletException {
+    List<Conversation> fakeConversationList = new ArrayList<>();
+    fakeConversationList.add(
+        new Conversation(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            "test_conversation",
+            Instant.now().plusSeconds(1)));
+
+    List<Message> fakeMessageList = new ArrayList<>();
+
+    List<User> fakeUserList = new ArrayList<>();
+    fakeUserList.add(
+        new User(
+            UUID.randomUUID(),
+            "test username",
+            "test password",
+            Instant.now().plusSeconds(3)));
+
+    Mockito.when(mockConversationStore.getAllConversations()).thenReturn(fakeConversationList);
+    Mockito.when(mockMessageStore.getAllMessages()).thenReturn(fakeMessageList);
+    Mockito.when(mockUserStore.getAllUsers()).thenReturn(fakeUserList);
+
+		// The order the objects should be in
+		List<Object> fakeActivityList = new ArrayList<>();
+		fakeActivityList.addAll(fakeUserList);
+		fakeActivityList.addAll(fakeMessageList);
+		fakeActivityList.addAll(fakeConversationList);
+
+    activityServlet.doGet(mockRequest, mockResponse);
+
+    Mockito.verify(mockRequest).setAttribute("activity", fakeActivityList);
+    Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
+  }
+
+  @Test
+  public void testDoGet_UserEmpty() throws IOException, ServletException {
+    List<Conversation> fakeConversationList = new ArrayList<>();
+    fakeConversationList.add(
+        new Conversation(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            "test_conversation",
+            Instant.now().plusSeconds(1)));
+
+    List<Message> fakeMessageList = new ArrayList<>();
+    fakeMessageList.add(
+        new Message(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            "test message",
+            Instant.now().plusSeconds(2)));
+
+   List<User> fakeUserList = new ArrayList<>();
+
+    Mockito.when(mockConversationStore.getAllConversations()).thenReturn(fakeConversationList);
+    Mockito.when(mockMessageStore.getAllMessages()).thenReturn(fakeMessageList);
+    Mockito.when(mockUserStore.getAllUsers()).thenReturn(fakeUserList);
+
+		// The order the objects should be in
+		List<Object> fakeActivityList = new ArrayList<>();
+		fakeActivityList.addAll(fakeUserList);
+		fakeActivityList.addAll(fakeMessageList);
+		fakeActivityList.addAll(fakeConversationList);
+
+    activityServlet.doGet(mockRequest, mockResponse);
+
+    Mockito.verify(mockRequest).setAttribute("activity", fakeActivityList);
+    Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
+  }
+
+  @Test
+  public void testDoGet_AllEmpty() throws IOException, ServletException {
+    List<Conversation> fakeConversationList = new ArrayList<>();
+    List<Message> fakeMessageList = new ArrayList<>();
+    List<User> fakeUserList = new ArrayList<>();
+
+    Mockito.when(mockConversationStore.getAllConversations()).thenReturn(fakeConversationList);
+    Mockito.when(mockMessageStore.getAllMessages()).thenReturn(fakeMessageList);
+    Mockito.when(mockUserStore.getAllUsers()).thenReturn(fakeUserList);
+
+		// The order the objects should be in
+		List<Object> fakeActivityList = new ArrayList<>();
+		fakeActivityList.addAll(fakeUserList);
+		fakeActivityList.addAll(fakeMessageList);
+		fakeActivityList.addAll(fakeConversationList);
+
+    activityServlet.doGet(mockRequest, mockResponse);
+
+    Mockito.verify(mockRequest).setAttribute("activity", fakeActivityList);
+    Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
+  }
+
+	@Test
+	public void testDoGet_CreationTimeEqual() throws IOException, ServletException {
+		Instant now = Instant.now();
+		List<Conversation> fakeConversationList = new ArrayList<>();
+    fakeConversationList.add(
+        new Conversation(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            "test_conversation",
+            now));
+
+    List<Message> fakeMessageList = new ArrayList<>();
+    fakeMessageList.add(
+        new Message(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            "test message",
+            now));
+
+    List<User> fakeUserList = new ArrayList<>();
+    fakeUserList.add(
+        new User(
+            UUID.randomUUID(),
+            "test username",
+            "test password",
+            now));
+
+		Mockito.when(mockConversationStore.getAllConversations()).thenReturn(fakeConversationList);
+		Mockito.when(mockMessageStore.getAllMessages()).thenReturn(fakeMessageList);
+		Mockito.when(mockUserStore.getAllUsers()).thenReturn(fakeUserList);
+
+		// The order the objects should be in
+		List<Object> fakeActivityList = new ArrayList<>();
+		fakeActivityList.addAll(fakeConversationList);
+    fakeActivityList.addAll(fakeMessageList);
+		fakeActivityList.addAll(fakeUserList);
+
+		activityServlet.doGet(mockRequest, mockResponse);
+
+		Mockito.verify(mockRequest).setAttribute("activity", fakeActivityList);
+		Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
+	}
 }
-*/
