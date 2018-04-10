@@ -104,6 +104,25 @@ public class UserStore {
     persistentStorageAgent.writeThrough(user);
   }
 
+  /**
+   * Verify {@code user} exists in {@code users}.
+   * If so, set new description for {@code user} from persistent storage,
+   * and return true if the operation is successful.
+   * Otherwise, return false.
+   *
+   * @param user          user whose account to update
+   * @param description   new description
+   *
+   * @return true if {@code user} description gets updated. Otherwise, false.
+   */
+  public boolean updateUserDescription(User user, String description) {
+    if (!isUserRegistered(user.getName())) {
+      return false;
+    }
+    User existingUser = getUser(user.getId());
+    return persistentStorageAgent.updateUserDescription(existingUser.getName(), description);
+  }
+
   /** Return true if the given username is known to the application. */
   public boolean isUserRegistered(String username) {
     for (User user : users) {
