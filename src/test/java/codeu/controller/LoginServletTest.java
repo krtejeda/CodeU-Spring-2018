@@ -116,6 +116,6 @@ public class LoginServletTest {
     loginServlet.doPost(mockRequest, mockResponse);
 
     Mockito.verify(mockSession).setAttribute("user", TEST_USERNAME);
-    Mockito.verify(mockResponse).sendRedirect(mockRequest.getHeader("referer"));
+    Mockito.verify(mockResponse).sendRedirect(mockRequest.getRequestURI());
   }
 }
