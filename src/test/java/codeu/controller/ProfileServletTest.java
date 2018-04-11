@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Test {@link ProfileServlet}
+ * Tests {@link ProfileServlet}
  *
  * @author Elle Tojaroon (etojaroo@codeustudents.com)
  */
@@ -68,7 +68,7 @@ public class ProfileServletTest {
     }
 
     @Test
-    public void testDoGet() throws IOException, ServletException {
+    public void testDoGet_ValidUser() throws IOException, ServletException {
         String username = "Mary";
         User user =
             new User(
@@ -118,6 +118,21 @@ public class ProfileServletTest {
             .setAttribute("messages", messages);
         Mockito.verify(mockRequestDispatcher)
             .forward(mockRequest, mockResponse);
+    }
+
+    @Test
+    public void testDoGet_UserNotFound() throws IOException, ServletException {
+      String invalidUsername = "inValidUsername";
+      Mockito.when(mockRequest.getRequestURI())
+          .thenReturn("/profile/" + invalidUsername);
+
+      Mockito.doCallRealMethod()
+          .when(mockProfileServlet)
+          .doGet(mockRequest, mockResponse);
+      mockProfileServlet.doGet(mockRequest, mockResponse);
+
+      Mockito.verify(mockResponse)
+          .sendRedirect("/conversations");
     }
 
     @Test
