@@ -2,8 +2,8 @@
 <%@ page import="codeu.model.data.Message" %>
 <%@ page import="codeu.model.data.User" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.TimeZone" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
-<%@ page import="java.time.ZoneId" %>
 <%
 List<Conversation> conversations = (List<Conversation>) request.getAttribute("conversations");
 List<Message> messages = (List<Message>) request.getAttribute("messages");
@@ -122,7 +122,7 @@ User owner = (User) request.getAttribute("owner");
                         for (Message message : messages) {
                             String creationTime =
                                 DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
-                                    .withZone(ZoneId.systemDefault())
+                                    .withZone(TimeZone.getDefault().toZoneId())
                                     .format(message.getCreationTime());
                     %>
                         <li>
