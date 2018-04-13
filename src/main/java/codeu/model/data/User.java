@@ -73,7 +73,9 @@ public class User {
   }
 
   /** Sets password of this User. */
-  public void setPassword(String password) { this.password = password; }
+  public void setPassword(String newPassword) {
+    this.password = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+  }
 
   /** Returns the creation time of this User. */
   public Instant getCreationTime() {

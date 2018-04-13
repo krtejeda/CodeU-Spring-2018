@@ -109,4 +109,8 @@ public class PersistentStorageAgent {
   public boolean updateUserDescription(String username, String description) {
     return persistentDataStore.updateUserDescription(username, description);
   }
+
+  public boolean updateUserPassword(String username, String password) {
+    return persistentDataStore.updateUserPassword(username, password);
+  }
 }

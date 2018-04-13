@@ -59,7 +59,7 @@ public class ForgetPasswordServletTest {
 
     forgetPasswordServlet.doPost(mockRequest, mockResponse);
 
-    Mockito.verify(mockRequest).setAttribute("error", "That username was not found");
+    Mockito.verify(mockRequest).setAttribute("error", "Username was not found");
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
 
@@ -73,10 +73,29 @@ public class ForgetPasswordServletTest {
     Mockito.when(mockUserStore.isUserRegistered(TEST_USERNAME)).thenReturn(true);
     forgetPasswordServlet.setUserStore(mockUserStore);
     Mockito.when(mockUserStore.getUser(TEST_USERNAME)).thenReturn(USER);
+    Mockito.when(mockUserStore.updateUserPassword(USER,newPassword)).thenReturn(true);
 
     forgetPasswordServlet.doPost(mockRequest, mockResponse);
 
     Assert.assertTrue(BCrypt.checkpw(newPassword,USER.getPassword()));
     Mockito.verify(mockResponse).sendRedirect("/login");
+  }
+
+  @Test
+  public void testDoPost_UpdateFailure() throws IOException, ServletException {
+    String newPassword = "new password";
+    Mockito.when(mockRequest.getParameter("username")).thenReturn(TEST_USERNAME);
+    Mockito.when(mockRequest.getParameter("password")).thenReturn(newPassword);
+
+    UserStore mockUserStore = Mockito.mock(UserStore.class);
+    Mockito.when(mockUserStore.isUserRegistered(TEST_USERNAME)).thenReturn(true);
+    forgetPasswordServlet.setUserStore(mockUserStore);
+    Mockito.when(mockUserStore.getUser(TEST_USERNAME)).thenReturn(USER);
+    Mockito.when(mockUserStore.updateUserPassword(USER,newPassword)).thenReturn(false);
+
+    forgetPasswordServlet.doPost(mockRequest, mockResponse);
+
+    Mockito.verify(mockRequest).setAttribute("UpdatePasswordError","Failure to reset password. Please try again later.");
+    Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
 }

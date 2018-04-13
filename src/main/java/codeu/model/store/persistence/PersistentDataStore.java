@@ -196,4 +196,11 @@ public class PersistentDataStore {
         .build()
         .update();
   }
+
+  public boolean updateUserPassword(String username, String password) {
+    return new UpdateUserPersistentDatastore.Builder(datastore, username)
+        .setNewPassword(password)
+        .build()
+        .update();
+  }
 }

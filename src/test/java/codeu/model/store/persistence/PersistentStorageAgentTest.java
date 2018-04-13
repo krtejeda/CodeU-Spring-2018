@@ -88,4 +88,25 @@ public class PersistentStorageAgentTest {
     Assert.assertFalse(persistentStorageAgent.updateUserDescription(username, newDescription));
     Mockito.verify(mockPersistentDataStore).updateUserDescription(username, newDescription);
   }
+
+  @Test
+  public void testUpdateUserPassword_successful() {
+    String username = "username";
+    String newPassword = "new password";
+    Mockito.when(mockPersistentDataStore.updateUserPassword(username, newPassword))
+            .thenReturn(true);
+    Assert.assertTrue(persistentStorageAgent.updateUserPassword(username, newPassword));
+    Mockito.verify(mockPersistentDataStore).updateUserPassword(username, newPassword);
+  }
+
+  @Test
+  public void testUpdateUserPassword_failed() {
+    String username = "username";
+    String newPassword = "new password";
+    Mockito.when(mockPersistentDataStore.updateUserPassword(username, newPassword))
+            .thenReturn(false);
+    Assert.assertFalse(persistentStorageAgent.updateUserPassword(username, newPassword));
+    Mockito.verify(mockPersistentDataStore).updateUserPassword(username, newPassword);
+  }
+
 }

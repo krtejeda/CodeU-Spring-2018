@@ -104,6 +104,7 @@ public class UserStore {
     persistentStorageAgent.writeThrough(user);
   }
 
+
   /**
    * Verify {@code user} exists in {@code users}.
    * If so, set new description for {@code user} from persistent storage,
@@ -121,6 +122,23 @@ public class UserStore {
     }
     User existingUser = getUser(user.getId());
     return persistentStorageAgent.updateUserDescription(existingUser.getName(), description);
+  }
+
+  /**
+   * Verify {@code user} exists in {@code users}.
+   * If so, set new password for {@code user} from persistent storage,
+   * and return true if the operation is successful.
+   * Otherwise, return false.
+   * @param user        user whose account to update
+   * @param password    new password
+   * @return
+   */
+  public boolean updateUserPassword(User user, String password) {
+    if(!isUserRegistered(user.getName())) {
+      return false;
+    }
+    User existingUser = getUser(user.getId());
+    return persistentStorageAgent.updateUserPassword(existingUser.getName(),password);
   }
 
   /** Return true if the given username is known to the application. */
