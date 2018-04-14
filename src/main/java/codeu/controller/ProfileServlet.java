@@ -6,10 +6,14 @@ import codeu.model.data.User;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
+import com.google.appengine.repackaged.com.google.common.collect.ImmutableMap;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.TimeZone;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,6 +29,7 @@ import org.jsoup.safety.Whitelist;
  */
 public class ProfileServlet extends HttpServlet {
 
+    private static final String DISPLAY_MESSAGE_TIME_PATTERN = "EEE MMM dd HH:mm:ss zzz yyyy";
     private ConversationStore conversationStore;
     private MessageStore messageStore;
     private UserStore userStore;
@@ -67,14 +72,33 @@ public class ProfileServlet extends HttpServlet {
             return;
         }
 
-        List<Conversation> ownerConversations = getConversationsOfUser(owner);
-        List<Message> ownerMessages = getMessagesOfUser(owner, ownerConversations);
-
-        request.setAttribute("conversations", ownerConversations);
-        request.setAttribute("messages", ownerMessages);
+        request.setAttribute("conversations", getConversationsOfUser(owner));
+        request.setAttribute(
+            "messageDisplayTimeToMessageContent",
+            getMessageDisplayTimeToMessageContentOfUser(owner));
         request.setAttribute("owner", owner);
         request.getRequestDispatcher("/WEB-INF/view/profile.jsp")
             .forward(request, response);
+    }
+
+  /**
+   * Get map of all messages of {@code user} from message display time to message content.
+   * Display time is in format e.g. "Mon Dec 03 21:44:50 EST 2018"
+   * @param user  who sent messages
+   * @return immutable map from message display time to message content.
+   */
+  private ImmutableMap<String, String> getMessageDisplayTimeToMessageContentOfUser(User user) {
+      return getMessagesOfUser(user)
+          .stream()
+          .collect(Collector.of(
+              ImmutableMap.Builder<String, String>::new,
+              (map, message) -> map.put(
+                  DateTimeFormatter.ofPattern(DISPLAY_MESSAGE_TIME_PATTERN)
+                      .withZone(TimeZone.getDefault().toZoneId())
+                      .format(message.getCreationTime()),
+                  message.getContent()),
+              (map1, map2) -> map1.putAll(map2.build()),
+              ImmutableMap.Builder::build));
     }
 
     /**
@@ -95,13 +119,14 @@ public class ProfileServlet extends HttpServlet {
     }
 
     /**
-     * Get all messages that {@code user} sent in {@code conversations}
+     * Get all messages that {@code user} sent in {@code conversations}, sorted in order of
+     * creation time
+     *
      * @param user              user who sent the messages
-     * @param conversations     conversations to look for the messages
      * @return  messages that {@code user} sent
      */
-    private List<Message> getMessagesOfUser(User user, Collection<Conversation> conversations) {
-        return conversations
+    private List<Message> getMessagesOfUser(User user) {
+        return getConversationsOfUser(user)
             .stream()
             .flatMap(conversation ->
                 messageStore.getMessagesInConversation(conversation.id)
