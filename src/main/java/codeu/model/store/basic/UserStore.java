@@ -69,6 +69,10 @@ public class UserStore {
     users.addAll(DefaultDataStore.getInstance().getAllUsers());
   }
 
+  List<User> getUsers() {
+    return users;
+  }
+
   /**
    * Access the User object with the given name.
    *

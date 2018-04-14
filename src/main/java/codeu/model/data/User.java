@@ -14,9 +14,10 @@
 
 package codeu.model.data;
 
+import codeu.model.store.basic.AdminStore;
+import codeu.model.store.basic.UserStore;
 import java.time.Instant;
 import java.util.UUID;
-import org.mindrot.jbcrypt.BCrypt;
 
 /** Class representing a registered user. */
 public class User {
@@ -25,6 +26,34 @@ public class User {
   private String password;
   private final Instant creation;
   private String description;
+  private boolean isAdmin;
+
+  public static final boolean DEFAULT_IS_ADMIN = false;
+
+  /**
+   * Constructs a new User.
+   *
+   * @param id the ID of this User
+   * @param name the username of this User
+   * @param password the password of this User
+   * @param creation the creation time of this User
+   * @param description description to show on user's profile page
+   * @param isAdmin is true if this user is an admin
+   */
+  public User(
+      UUID id,
+      String name,
+      String password,
+      Instant creation,
+      String description,
+      boolean isAdmin) {
+    this.id = id;
+    this.name = name;
+    this.password = password;
+    this.creation = creation;
+    this.description = description;
+    this.isAdmin = isAdmin;
+  }
 
   /**
    * Constructs a new User.
@@ -36,11 +65,7 @@ public class User {
    * @param description description to show on user's profile page
    */
   public User(UUID id, String name, String password, Instant creation, String description) {
-      this.id = id;
-      this.name = name;
-      this.password = password;
-      this.creation = creation;
-      this.description = description;
+      this(id, name, password, creation, description, false);
   }
 
   /**
@@ -92,5 +117,13 @@ public class User {
 
   public static String getDefaultDescription(String name) {
     return "Hi, I'm " + name + ".";
+  }
+
+  public void setAdmin(boolean isAdmin) {
+    this.isAdmin = isAdmin;
+  }
+
+  public boolean isAdmin() {
+    return isAdmin;
   }
 }
