@@ -25,6 +25,7 @@ import javax.servlet.http.HttpSession;
 import org.junit.Before;
 import org.junit.Test;
 import org.mindrot.jbcrypt.BCrypt;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import java.time.Instant;
 import java.util.UUID;
@@ -57,8 +58,12 @@ public class LoginServletTest {
 
   @Test
   public void testDoGet() throws IOException, ServletException {
+    HttpSession mockSession = Mockito.mock(HttpSession.class);
+    Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
+
     loginServlet.doGet(mockRequest, mockResponse);
 
+    Mockito.verify(mockSession).removeAttribute("user");
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
 
