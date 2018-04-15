@@ -3,7 +3,9 @@ package codeu.model.store.basic;
 import codeu.model.data.User;
 import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -27,11 +29,23 @@ public class AdminStore {
   private AdminStore(UserStore userStore) {
     setUserStore(userStore);
     admins = new HashMap<>();
-    setAdmins(userStore.getUsers());
+    List<User> users = userStore.getUsers();
+    setDefaultAdmin(users);
+    setAdmins(users);
   }
 
   private void setUserStore(UserStore userStore) {
     this.userStore = userStore;
+  }
+
+  /**
+   * Set isAdmin of the oldest user by creation time to true
+   * @param users all users
+   */
+  private void setDefaultAdmin(Collection<User> users) {
+    users.stream()
+        .min(Comparator.comparing(User::getCreationTime))
+        .ifPresent(user -> user.setAdmin(true));
   }
 
   /**
