@@ -1,3 +1,4 @@
+<%@ page import="codeu.model.data.User" %>
 <%--
   Copyright 2017 Google Inc.
 
@@ -45,7 +46,7 @@
   <div id="container">
     <h1>Load Test Data</h1>
     <p>This will load a number of users, conversations, and messages for testing
-        purposes.</p>
+      purposes.</p>
     <form action="/testdata" method="POST">
       <button type="submit" value="confirm" name="confirm">Confirm</button>
       <button type="submit" value="cancel" name="cancel">Do Nothing</button>

@@ -73,6 +73,10 @@ public class UserStore {
     return users;
   }
 
+  public int getUsersCount() {
+    return users.size();
+  }
+
   /**
    * Access the User object with the given name.
    *

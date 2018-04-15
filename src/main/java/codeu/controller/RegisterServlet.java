@@ -7,9 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import codeu.model.store.basic.UserStore;
 import codeu.model.data.User;
-import codeu.model.store.persistence.PersistentStorageAgent;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.time.Instant;
 import org.mindrot.jbcrypt.BCrypt;
@@ -49,6 +46,12 @@ public class RegisterServlet extends HttpServlet {
       return;
     }
     User user = new User(UUID.randomUUID(), username, passwordHash, Instant.now());
+
+    // set first registered user a default admin
+    if (userStore.getUsersCount() == 0) {
+      user.setAdmin(true);
+    }
+
     userStore.addUser(user);
 
     response.sendRedirect("/login");
