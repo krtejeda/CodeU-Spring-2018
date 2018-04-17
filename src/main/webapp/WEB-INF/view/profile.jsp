@@ -1,12 +1,11 @@
 <%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.data.User" %>
 <%@ page import="com.google.appengine.repackaged.com.google.common.collect.ImmutableMap" %>
-<%@ page import="java.util.LinkedHashMap" %>
 <%@ page import="java.util.List" %>
 <%
 List<Conversation> conversations = (List<Conversation>) request.getAttribute("conversations");
 ImmutableMap<String, String> messageDisplayTimeToMessageContent =
-        (ImmutableMap<String, String>) request.getAttribute("messageDisplayTimeToMessageContent");
+    (ImmutableMap<String, String>) request.getAttribute("messageDisplayTimeToMessageContent");
 User owner = (User) request.getAttribute("owner");
 %>
 

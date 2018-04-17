@@ -9,11 +9,9 @@ import codeu.model.store.basic.UserStore;
 import com.google.appengine.repackaged.com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -88,95 +86,98 @@ public class ProfileServlet extends HttpServlet {
    * @return immutable map from message display time to message content.
    */
   private ImmutableMap<String, String> getMessageDisplayTimeToMessageContentOfUser(User user) {
-      return getMessagesOfUser(user)
-          .stream()
-          .collect(Collector.of(
-              ImmutableMap.Builder<String, String>::new,
-              (map, message) -> map.put(
-                  DateTimeFormatter.ofPattern(DISPLAY_MESSAGE_TIME_PATTERN)
-                      .withZone(TimeZone.getDefault().toZoneId())
-                      .format(message.getCreationTime()),
-                  message.getContent()),
-              (map1, map2) -> map1.putAll(map2.build()),
-              ImmutableMap.Builder::build));
+    return getMessagesOfUser(user)
+        .stream()
+        .collect(Collectors.collectingAndThen(
+            Collectors.toMap(
+                this::getDisplayMessageTime,
+                Message::getContent,
+                (firstContent, secondContent) -> firstContent),
+            ImmutableMap::copyOf));
+  }
+
+  private String getDisplayMessageTime(Message message) {
+    return DateTimeFormatter.ofPattern(DISPLAY_MESSAGE_TIME_PATTERN)
+        .withZone(TimeZone.getDefault().toZoneId())
+        .format(message.getCreationTime());
+  }
+
+  /**
+   * Get all conversations that {@code user} has sent a message to
+   *
+   * @return list of conversations {@code user} has sent a message to
+   */
+  private List<Conversation> getConversationsOfUser(User user) {
+    return conversationStore.getAllConversations()
+        .stream()
+        .filter(conversation ->
+            messageStore.getMessagesInConversation(conversation.id)
+                .stream()
+                .filter(message -> message.getAuthorId().equals(user.getId()))
+                .findAny()
+                .isPresent())
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Get all messages that {@code user} sent in {@code conversations}, sorted in order of creation
+   * time
+   *
+   * @param user user who sent the messages
+   * @return messages that {@code user} sent
+   */
+  private List<Message> getMessagesOfUser(User user) {
+    return getConversationsOfUser(user)
+        .stream()
+        .flatMap(conversation ->
+            messageStore.getMessagesInConversation(conversation.id)
+                .stream()
+                .filter(message -> message.getAuthorId().equals(user.getId())))
+        .sorted(Comparator.comparing(Message::getCreationTime).reversed())
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * This function fires when a user submits the form to edit description on the profile page. It
+   * gets the logged-in username from the session, verifying against username from the URL. It adds
+   * the description to the user model, redirects back to the profile page.
+   */
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
+    String requestUrl = request.getRequestURI();
+    String urlName = requestUrl.substring("/profile/".length());
+
+    String logInName = (String) request.getSession().getAttribute("user");
+    if (logInName == null || !urlName.equals(logInName)) {
+      // user is not logged in or not editing their own descriptions,
+      // don't let them add a message
+      response.sendRedirect("/login");
+      return;
     }
 
-    /**
-     * Get all conversations that {@code user} has sent a message to
-     * @param user
-     * @return list of conversations {@code user} has sent a message to
-     */
-    private List<Conversation> getConversationsOfUser(User user) {
-        return conversationStore.getAllConversations()
-            .stream()
-            .filter(conversation ->
-                messageStore.getMessagesInConversation(conversation.id)
-                    .stream()
-                    .filter(message -> message.getAuthorId().equals(user.getId()))
-                    .findAny()
-                    .isPresent())
-            .collect(Collectors.toList());
+    User user = userStore.getUser(logInName);
+    if (user == null) {
+      // user was not found, don't let them add a message
+      response.sendRedirect("/login");
+      return;
     }
 
-    /**
-     * Get all messages that {@code user} sent in {@code conversations}, sorted in order of
-     * creation time
-     *
-     * @param user              user who sent the messages
-     * @return  messages that {@code user} sent
-     */
-    private List<Message> getMessagesOfUser(User user) {
-        return getConversationsOfUser(user)
-            .stream()
-            .flatMap(conversation ->
-                messageStore.getMessagesInConversation(conversation.id)
-                    .stream()
-                    .filter(message -> message.getAuthorId().equals(user.getId())))
-            .sorted(Comparator.comparing(Message::getCreationTime).reversed())
-            .collect(Collectors.toList());
+    String newDescription = request.getParameter("description");
+
+    // this removes any HTML from the description content
+    String cleanedNewDescription = Jsoup.clean(newDescription, Whitelist.none());
+
+    user.setDescription(cleanedNewDescription);
+    if (userStore.updateUserDescription(user, cleanedNewDescription)) {
+      // redirect to a GET request
+      response.sendRedirect("/profile/" + logInName);
+    } else {
+      // alert or something
+      request.setAttribute(
+          "updateDescriptionError",
+          "Failed to update your description. Please try again later.");
+      doGet(request, response);
     }
-
-    /**
-     * This function fires when a user submits the form to edit description on the profile page. It
-     * gets the logged-in username from the session, verifying against username from the URL. It adds
-     * the description to the user model, redirects back to the profile page.
-     */
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws IOException, ServletException {
-      String requestUrl = request.getRequestURI();
-      String urlName = requestUrl.substring("/profile/".length());
-
-      String logInName = (String) request.getSession().getAttribute("user");
-      if (logInName == null || !urlName.equals(logInName)) {
-        // user is not logged in or not editing their own descriptions,
-        // don't let them add a message
-        response.sendRedirect("/login");
-        return;
-      }
-
-      User user = userStore.getUser(logInName);
-      if (user == null) {
-        // user was not found, don't let them add a message
-        response.sendRedirect("/login");
-        return;
-      }
-
-      String newDescription = request.getParameter("description");
-
-      // this removes any HTML from the description content
-      String cleanedNewDescription = Jsoup.clean(newDescription, Whitelist.none());
-
-      user.setDescription(cleanedNewDescription);
-      if (userStore.updateUserDescription(user, cleanedNewDescription)) {
-        // redirect to a GET request
-        response.sendRedirect("/profile/" + logInName);
-      } else {
-        // alert or something
-        request.setAttribute(
-            "updateDescriptionError",
-            "Failed to update your description. Please try again later.");
-        doGet(request, response);
-      }
-    }
+  }
 }
