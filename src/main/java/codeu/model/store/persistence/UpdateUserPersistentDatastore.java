@@ -27,6 +27,7 @@ public class UpdateUserPersistentDatastore {
   private final Optional<String> newUsername;
   private final Optional<String> newPassword;
   private final Optional<String> newDescription;
+  private final Optional<Boolean> newIsAdmin;
 
   /**
    * Sets up required and optional fields for {@link UpdateUserPersistentDatastore} to be updated.
@@ -40,6 +41,7 @@ public class UpdateUserPersistentDatastore {
     private String newUsername;
     private String newPassword;
     private String newDescription;
+    private boolean newIsAdmin;
 
     public Builder(DatastoreService datastore, String currentUsername) {
       this.datastore = datastore;
@@ -76,6 +78,16 @@ public class UpdateUserPersistentDatastore {
       return this;
     }
 
+    /**
+     * Sets isAdmin field
+     * @param isAdmin   new isAdmin to set
+     * @return  Builder
+     */
+    public Builder setNewIsAdmin(boolean isAdmin) {
+      this.newIsAdmin = isAdmin;
+      return this;
+    }
+
     public UpdateUserPersistentDatastore build() {
       return new UpdateUserPersistentDatastore(this);
     }
@@ -91,6 +103,7 @@ public class UpdateUserPersistentDatastore {
     newUsername = Optional.ofNullable(builder.newUsername);
     newPassword = Optional.ofNullable(builder.newPassword);
     newDescription = Optional.ofNullable(builder.newDescription);
+    newIsAdmin = Optional.ofNullable(builder.newIsAdmin);
   }
 
   /**
@@ -115,6 +128,9 @@ public class UpdateUserPersistentDatastore {
     }
     if (newDescription.isPresent()) {
       retrievedEntity.setProperty("description", newDescription.get());
+    }
+    if (newIsAdmin.isPresent()) {
+      retrievedEntity.setProperty("isAdmin", newIsAdmin.get());
     }
     datastore.put(retrievedEntity);
     return true;

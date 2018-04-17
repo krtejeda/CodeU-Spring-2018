@@ -109,4 +109,11 @@ public class PersistentStorageAgent {
   public boolean updateUserDescription(String username, String description) {
     return persistentDataStore.updateUserDescription(username, description);
   }
+
+  /**
+   * Modify User's isAdmin
+   */
+  public boolean updateUserIsAdmin(String username, boolean isAdmin) {
+    return persistentDataStore.updateUserIsAdmin(username, isAdmin);
+  }
 }

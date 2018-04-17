@@ -69,6 +69,14 @@ public class UserStore {
     users.addAll(DefaultDataStore.getInstance().getAllUsers());
   }
 
+  List<User> getUsers() {
+    return users;
+  }
+
+  public int getUsersCount() {
+    return users.size();
+  }
+
   /**
    * Access the User object with the given name.
    *
@@ -121,6 +129,24 @@ public class UserStore {
     }
     User existingUser = getUser(user.getId());
     return persistentStorageAgent.updateUserDescription(existingUser.getName(), description);
+  }
+
+  /**
+   * Verify {@code user} exists in {@code users}.
+   * If so, set new description for {@code user} from persistent storage,
+   * and return true if the operation is successful.
+   * Otherwise, return false.
+   *
+   * @param username      name of user whose account to update
+   * @param isAdmin       new isAdmin
+   *
+   * @return true if {@code user} description gets updated. Otherwise, false.
+   */
+  public boolean updateUserIsAdmin(String username, boolean isAdmin) {
+    if (!isUserRegistered(username)) {
+      return false;
+    }
+    return persistentStorageAgent.updateUserIsAdmin(username, isAdmin);
   }
 
   /** Return true if the given username is known to the application. */

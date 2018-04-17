@@ -75,7 +75,14 @@ public class PersistentDataStore {
         String description = entity.getProperty("description") != null ?
             (String) entity.getProperty("description") :
             User.getDefaultDescription(userName);
-        User user = new User(uuid, userName, password, creationTime, description);
+        Boolean isAdmin = (Boolean) entity.getProperty("isAdmin") ;
+        User user = new User(
+            uuid,
+            userName,
+            password,
+            creationTime,
+            description,
+            isAdmin != null ? isAdmin : User.DEFAULT_IS_ADMIN);
         users.add(user);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -163,6 +170,7 @@ public class PersistentDataStore {
     userEntity.setProperty("password", user.getPassword());
     userEntity.setProperty("creation_time", user.getCreationTime().toString());
     userEntity.setProperty("description", user.getDescription().toString());
+    userEntity.setProperty("isAdmin", user.isAdmin());
     datastore.put(userEntity);
   }
 
@@ -193,6 +201,16 @@ public class PersistentDataStore {
   public boolean updateUserDescription(String username, String description) {
     return new UpdateUserPersistentDatastore.Builder(datastore, username)
         .setNewDescription(description)
+        .build()
+        .update();
+  }
+
+  /**
+   * Modify User's isAdmin
+   */
+  public boolean updateUserIsAdmin(String username, boolean isAdmin) {
+    return new UpdateUserPersistentDatastore.Builder(datastore, username)
+        .setNewIsAdmin(isAdmin)
         .build()
         .update();
   }
