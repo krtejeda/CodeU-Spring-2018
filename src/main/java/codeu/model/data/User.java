@@ -46,7 +46,8 @@ public class User {
       String password,
       Instant creation,
       String description,
-      boolean isAdmin) {
+      boolean isAdmin)
+  {
     this.id = id;
     this.name = name;
     this.password = password;

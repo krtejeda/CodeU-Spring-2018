@@ -137,17 +137,16 @@ public class UserStore {
    * and return true if the operation is successful.
    * Otherwise, return false.
    *
-   * @param user          user whose account to update
+   * @param username      name of user whose account to update
    * @param isAdmin       new isAdmin
    *
    * @return true if {@code user} description gets updated. Otherwise, false.
    */
-  public boolean updateUserIsAdmin(User user, boolean isAdmin) {
-    if (!isUserRegistered(user.getName())) {
+  public boolean updateUserIsAdmin(String username, boolean isAdmin) {
+    if (!isUserRegistered(username)) {
       return false;
     }
-    User existingUser = getUser(user.getId());
-    return persistentStorageAgent.updateUserIsAdmin(existingUser.getName(), isAdmin);
+    return persistentStorageAgent.updateUserIsAdmin(username, isAdmin);
   }
 
   /** Return true if the given username is known to the application. */

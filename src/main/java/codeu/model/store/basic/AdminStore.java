@@ -72,12 +72,12 @@ public class AdminStore {
 
   public void addAdmin(User user) {
     admins.put(user.getName(), user);
-    userStore.updateUserIsAdmin(user, true);
+    userStore.updateUserIsAdmin(user.getName(), true);
   }
 
   public void removeAdmin(String username) {
     admins.remove(username);
-    userStore.updateUserIsAdmin(userStore.getUser(username), false);
+    userStore.updateUserIsAdmin(username, false);
   }
 
   public boolean isAdmin(String username) {
