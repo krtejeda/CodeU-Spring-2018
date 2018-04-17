@@ -137,6 +137,7 @@ public class UserStore {
    * If so, set new password for {@code user} from persistent storage,
    * and return true if the operation is successful.
    * Otherwise, return false.
+<<<<<<< HEAD
    * @param user        user whose account to update
    * @param password    new password
    * @return
@@ -147,6 +148,19 @@ public class UserStore {
     }
     User existingUser = getUser(user.getId());
     return persistentStorageAgent.updateUserPassword(existingUser.getName(), password);
+=======
+   *
+   * @param username      name of user whose account to update
+   * @param isAdmin       new isAdmin
+   *
+   * @return true if {@code user} description gets updated. Otherwise, false.
+   */
+  public boolean updateUserIsAdmin(String username, boolean isAdmin) {
+    if (!isUserRegistered(username)) {
+      return false;
+    }
+    return persistentStorageAgent.updateUserIsAdmin(username, isAdmin);
+>>>>>>> AdminPage: fixes
   }
 
   /** Return true if the given username is known to the application. */
