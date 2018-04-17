@@ -10,6 +10,7 @@ import codeu.model.data.User;
 
 /**
  * Servlet class responsible for forget/reset password page
+ * @author My Nguyen (mnguyen@codeustudents.com)
  */
 public class ForgetPasswordServlet extends HttpServlet {
 
@@ -26,8 +27,9 @@ public class ForgetPasswordServlet extends HttpServlet {
   }
 
   /**
-   * Sets the UserStore used by this servlet. This function provides a common setup method
-   * for use by the test framework or the servlet's init() function.
+   * Sets the UserStore used by this servlet. This function provides a common
+   * setup method for use by the test framework or the servlet's init()
+   * function.
    */
   void setUserStore(UserStore userStore) {
     this.userStore = userStore;
@@ -43,13 +45,15 @@ public class ForgetPasswordServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
-    request.getRequestDispatcher("/WEB-INF/view/forgetpassword.jsp").forward(request,response);
+    request.getRequestDispatcher("/WEB-INF/view/forgetpassword.jsp")
+        .forward(request,response);
   }
 
   /**
-   * This function fires when user submits a form to reset password. It checks if the username is registered
-   * and allows user to change password if it is. Otherwise, show an error to the user.
-   * // TODO (My): Add verification method. For now it just lets anyone reset any username's password.
+   * This function fires when user submits a form to reset password.
+   * It checks if the username is registered and allows user to change password if so.
+   * Otherwise, show an error to the user.
+   * // TODO (My): Add verification method.
    * @param request
    * @param response
    * @throws IOException
@@ -63,16 +67,19 @@ public class ForgetPasswordServlet extends HttpServlet {
 
     if(userStore.isUserRegistered(username)) {
       User user = userStore.getUser(username);
-      user.setPassword(newPassword);
       if(userStore.updateUserPassword(user, newPassword)) {
+        user.setPassword(newPassword);
         response.sendRedirect("/login");
       } else {
-        request.setAttribute("UpdatePasswordError","Failure to reset password. Please try again later.");
-        request.getRequestDispatcher("/WEB-INF/view/forgetpassword.jsp").forward(request, response);
+        request.setAttribute("UpdatePasswordError",
+            "Failure to reset password. Please try again later.");
+        request.getRequestDispatcher("/WEB-INF/view/forgetpassword.jsp")
+            .forward(request, response);
       }
     } else {
       request.setAttribute("error", "Username was not found");
-      request.getRequestDispatcher("/WEB-INF/view/forgetpassword.jsp").forward(request, response);
+      request.getRequestDispatcher("/WEB-INF/view/forgetpassword.jsp")
+          .forward(request, response);
     }
   }
 }

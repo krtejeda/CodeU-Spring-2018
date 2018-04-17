@@ -73,11 +73,11 @@ public class ForgetPasswordServletTest {
     Mockito.when(mockUserStore.isUserRegistered(TEST_USERNAME)).thenReturn(true);
     forgetPasswordServlet.setUserStore(mockUserStore);
     Mockito.when(mockUserStore.getUser(TEST_USERNAME)).thenReturn(USER);
-    Mockito.when(mockUserStore.updateUserPassword(USER,newPassword)).thenReturn(true);
+    Mockito.when(mockUserStore.updateUserPassword(USER, newPassword)).thenReturn(true);
 
     forgetPasswordServlet.doPost(mockRequest, mockResponse);
 
-    Assert.assertTrue(BCrypt.checkpw(newPassword,USER.getPassword()));
+    Assert.assertTrue(BCrypt.checkpw(newPassword, USER.getPassword()));
     Mockito.verify(mockResponse).sendRedirect("/login");
   }
 
@@ -91,11 +91,12 @@ public class ForgetPasswordServletTest {
     Mockito.when(mockUserStore.isUserRegistered(TEST_USERNAME)).thenReturn(true);
     forgetPasswordServlet.setUserStore(mockUserStore);
     Mockito.when(mockUserStore.getUser(TEST_USERNAME)).thenReturn(USER);
-    Mockito.when(mockUserStore.updateUserPassword(USER,newPassword)).thenReturn(false);
+    Mockito.when(mockUserStore.updateUserPassword(USER, newPassword)).thenReturn(false);
 
     forgetPasswordServlet.doPost(mockRequest, mockResponse);
 
-    Mockito.verify(mockRequest).setAttribute("UpdatePasswordError","Failure to reset password. Please try again later.");
+    Mockito.verify(mockRequest).setAttribute("UpdatePasswordError",
+        "Failure to reset password. Please try again later.");
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
 }

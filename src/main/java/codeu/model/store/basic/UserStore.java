@@ -138,7 +138,7 @@ public class UserStore {
       return false;
     }
     User existingUser = getUser(user.getId());
-    return persistentStorageAgent.updateUserPassword(existingUser.getName(),password);
+    return persistentStorageAgent.updateUserPassword(existingUser.getName(), password);
   }
 
   /** Return true if the given username is known to the application. */

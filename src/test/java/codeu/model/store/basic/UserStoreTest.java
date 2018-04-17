@@ -145,24 +145,24 @@ public class UserStoreTest {
   public void testUpdateUserPassword_UserNotRegistered() {
     User fakeUser =
             new User(
-                    UUID.randomUUID(),
-                    "test_username_three",
-                    "password",
-                    Instant.now());
+                UUID.randomUUID(),
+                "test_username_three",
+                "password",
+                Instant.now());
     String newPassword = "new password";
     userStore = Mockito.mock(UserStore.class);
     Mockito
-            .when(userStore.isUserRegistered(fakeUser.getName()))
-            .thenReturn(false);
+        .when(userStore.isUserRegistered(fakeUser.getName()))
+        .thenReturn(false);
     Mockito
-            .when(
-                    userStore.updateUserPassword(
-                            fakeUser,
-                            newPassword))
-            .thenCallRealMethod();
+        .when(
+            userStore.updateUserPassword(
+                fakeUser,
+                newPassword))
+        .thenCallRealMethod();
     Assert.assertFalse(userStore.updateUserPassword(
-            fakeUser,
-            newPassword));
+        fakeUser,
+        newPassword));
   }
 
 
@@ -170,32 +170,32 @@ public class UserStoreTest {
   public void testUpdateUserPassword_UpdateSuccessful() {
     String newPassword = "new password";
     Mockito
-            .when(
-                    mockPersistentStorageAgent.updateUserPassword(USER_ONE.getName(), newPassword))
-            .thenReturn(true);
+        .when(
+            mockPersistentStorageAgent.updateUserPassword(USER_ONE.getName(), newPassword))
+        .thenReturn(true);
 
     Assert.assertTrue(
-            userStore.updateUserPassword(
-                    USER_ONE,
-                    newPassword));
+        userStore.updateUserPassword(
+            USER_ONE,
+            newPassword));
     Mockito.verify(mockPersistentStorageAgent)
-            .updateUserPassword(USER_ONE.getName(), newPassword);
+        .updateUserPassword(USER_ONE.getName(), newPassword);
   }
 
   @Test
   public void testUpdateUserPassword_UpdateFailed() {
     String newPassword = "new password";
     Mockito
-            .when(
-                    mockPersistentStorageAgent.updateUserPassword(USER_ONE.getName(), newPassword))
-            .thenReturn(false);
+        .when(
+            mockPersistentStorageAgent.updateUserPassword(USER_ONE.getName(), newPassword))
+        .thenReturn(false);
 
     Assert.assertFalse(
-            userStore.updateUserPassword(
-                    USER_ONE,
-                    newPassword));
+        userStore.updateUserPassword(
+            USER_ONE,
+            newPassword));
     Mockito.verify(mockPersistentStorageAgent)
-            .updateUserPassword(USER_ONE.getName(), newPassword);
+        .updateUserPassword(USER_ONE.getName(), newPassword);
   }
 
 
