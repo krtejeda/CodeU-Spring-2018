@@ -27,6 +27,7 @@ public class RegisterServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
+    request.getSession().removeAttribute("user");
     request.getRequestDispatcher("/WEB-INF/view/register.jsp").forward(request, response);
   }
 
