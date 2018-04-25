@@ -15,6 +15,7 @@
 package codeu.controller;
 
 import codeu.model.data.User;
+import codeu.model.data.UserGroup;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import java.time.Instant;
@@ -74,7 +75,7 @@ public class LoginServlet extends HttpServlet {
       User user = userStore.getUser(username);
       if(BCrypt.checkpw(password, user.getPassword())) {
         request.getSession().setAttribute("user", username);
-        request.getSession().setAttribute("isAdmin", user.isAdmin());
+        request.getSession().setAttribute("isAdmin", user.group() == UserGroup.ADMIN);
         response.sendRedirect(request.getRequestURI());
       } else {
         request.setAttribute("error", "Invalid password.");

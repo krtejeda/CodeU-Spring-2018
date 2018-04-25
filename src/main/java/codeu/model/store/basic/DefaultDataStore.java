@@ -17,6 +17,7 @@ package codeu.model.store.basic;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
+import codeu.model.data.UserGroup;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -103,7 +104,8 @@ public class DefaultDataStore {
           UUID.randomUUID(),
           randomUsernames.get(i),
           BCrypt.hashpw("password", BCrypt.gensalt()),
-          Instant.now());
+          Instant.now(),
+          UserGroup.REGULAR_USER);
       PersistentStorageAgent.getInstance().writeThrough(user);
       users.add(user);
     }
