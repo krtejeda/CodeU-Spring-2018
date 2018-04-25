@@ -1,6 +1,7 @@
 package codeu.model.store.basic;
 
 import codeu.model.data.User;
+import codeu.model.data.UserGroup;
 import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -45,7 +46,7 @@ public class AdminStore {
   private void setDefaultAdmin(Collection<User> users) {
     users.stream()
         .min(Comparator.comparing(User::getCreationTime))
-        .ifPresent(user -> user.setAdmin(true));
+        .ifPresent(user -> user.setGroup(UserGroup.ADMIN));
   }
 
   /**
@@ -66,7 +67,7 @@ public class AdminStore {
   private void setAdmins(Collection<User> users) {
     admins =
       users.stream()
-        .filter(user -> user.isAdmin())
+        .filter(user -> user.group() == UserGroup.ADMIN)
         .collect(Collectors.toMap(User::getName, Function.identity()));
   }
 

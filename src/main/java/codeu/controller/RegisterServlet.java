@@ -1,5 +1,6 @@
 package codeu.controller;
 
+import codeu.model.data.UserGroup;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -45,11 +46,17 @@ public class RegisterServlet extends HttpServlet {
       request.getRequestDispatcher("/WEB-INF/view/register.jsp").forward(request, response);
       return;
     }
-    User user = new User(UUID.randomUUID(), username, passwordHash, Instant.now());
+    User user =
+        new User(
+            UUID.randomUUID(),
+            username,
+            passwordHash,
+            Instant.now(),
+            UserGroup.REGULAR_USER);
 
-    // set first registered user a default admin
+    // set first registered user as root
     if (userStore.getUsersCount() == 0) {
-      user.setAdmin(true);
+      user.setGroup(UserGroup.ROOT);
     }
 
     userStore.addUser(user);

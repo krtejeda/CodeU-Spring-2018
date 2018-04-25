@@ -15,6 +15,7 @@
 package codeu.controller;
 
 import codeu.model.data.User;
+import codeu.model.data.UserGroup;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
@@ -45,7 +46,8 @@ public class LoginServletTest {
       UUID.randomUUID(),
       TEST_USERNAME,
       TEST_PASSWORD_HASH,
-      Instant.now());
+      Instant.now(),
+      UserGroup.REGULAR_USER);
 
   @Before
   public void setup() {

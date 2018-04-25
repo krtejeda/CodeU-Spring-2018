@@ -26,11 +26,9 @@ public class User {
   private String password;
   private final Instant creation;
   private String description;
-  private boolean isAdmin;
+  private UserGroup group;
 
-  public static final boolean DEFAULT_IS_ADMIN = false;
-
-  /**
+  /** TODO(Elle) create a builder pattern for user
    * Constructs a new User.
    *
    * @param id the ID of this User
@@ -38,7 +36,7 @@ public class User {
    * @param password the password of this User
    * @param creation the creation time of this User
    * @param description description to show on user's profile page
-   * @param isAdmin is true if this user is an admin
+   * @param group {@link UserGroup} this user is in
    */
   public User(
       UUID id,
@@ -46,27 +44,14 @@ public class User {
       String password,
       Instant creation,
       String description,
-      boolean isAdmin)
+      UserGroup group)
   {
     this.id = id;
     this.name = name;
     this.password = password;
     this.creation = creation;
     this.description = description;
-    this.isAdmin = isAdmin;
-  }
-
-  /**
-   * Constructs a new User.
-   *
-   * @param id the ID of this User
-   * @param name the username of this User
-   * @param password the password of this User
-   * @param creation the creation time of this User
-   * @param description description to show on user's profile page
-   */
-  public User(UUID id, String name, String password, Instant creation, String description) {
-      this(id, name, password, creation, description, false);
+    this.group = group;
   }
 
   /**
@@ -77,8 +62,8 @@ public class User {
    * @param password the password of this User
    * @param creation the creation time of this User
    */
-  public User(UUID id, String name, String password, Instant creation) {
-    this(id, name, password, creation, getDefaultDescription(name));
+  public User(UUID id, String name, String password, Instant creation, UserGroup group) {
+    this(id, name, password, creation, getDefaultDescription(name), group);
   }
 
   /** Returns the ID of this User. */
@@ -120,11 +105,11 @@ public class User {
     return "Hi, I'm " + name + ".";
   }
 
-  public void setAdmin(boolean isAdmin) {
-    this.isAdmin = isAdmin;
+  public void setGroup(UserGroup group) {
+    this.group = group;
   }
 
-  public boolean isAdmin() {
-    return isAdmin;
+  public UserGroup group() {
+    return group;
   }
 }

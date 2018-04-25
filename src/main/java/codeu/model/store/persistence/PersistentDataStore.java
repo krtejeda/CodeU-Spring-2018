@@ -17,6 +17,7 @@ package codeu.model.store.persistence;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
+import codeu.model.data.UserGroup;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -75,14 +76,14 @@ public class PersistentDataStore {
         String description = entity.getProperty("description") != null ?
             (String) entity.getProperty("description") :
             User.getDefaultDescription(userName);
-        Boolean isAdmin = (Boolean) entity.getProperty("isAdmin") ;
+        UserGroup group = (UserGroup) entity.getProperty("group") ;
         User user = new User(
             uuid,
             userName,
             password,
             creationTime,
             description,
-            isAdmin != null ? isAdmin : User.DEFAULT_IS_ADMIN);
+            group); // TODO(Elle) delete local datastore so no user with null group
         users.add(user);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -170,7 +171,7 @@ public class PersistentDataStore {
     userEntity.setProperty("password", user.getPassword());
     userEntity.setProperty("creation_time", user.getCreationTime().toString());
     userEntity.setProperty("description", user.getDescription().toString());
-    userEntity.setProperty("isAdmin", user.isAdmin());
+    userEntity.setProperty("isAdmin", user.group() == UserGroup.ADMIN);
     datastore.put(userEntity);
   }
 
