@@ -22,7 +22,7 @@ public class ImmutableChatbot extends User implements Chatbot {
         name,
         null /* password */,
         creation, getDefaultDescription(name),
-        UserGroup.BOTS);
+        UserGroup.BOT);
 
     this.messageStore = messageStore;
   }
