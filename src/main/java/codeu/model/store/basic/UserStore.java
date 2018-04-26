@@ -14,7 +14,7 @@
 
 package codeu.model.store.basic;
 
-import codeu.model.data.User;
+import codeu.model.data.user.User;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
 import java.util.List;
