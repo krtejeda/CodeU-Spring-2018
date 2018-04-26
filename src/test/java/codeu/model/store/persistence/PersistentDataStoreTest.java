@@ -2,8 +2,8 @@ package codeu.model.store.persistence;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
-import codeu.model.data.User;
-import codeu.model.data.UserGroup;
+import codeu.model.data.user.User;
+import codeu.model.data.user.UserGroup;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import java.time.Instant;

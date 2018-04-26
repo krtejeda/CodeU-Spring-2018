@@ -1,4 +1,4 @@
-package codeu.model.data;
+package codeu.model.data.user;
 
 public enum UserGroup {
   ROOT(0),

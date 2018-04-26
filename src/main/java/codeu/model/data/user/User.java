@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package codeu.model.data;
+package codeu.model.data.user;
 
-import codeu.model.store.basic.AdminStore;
-import codeu.model.store.basic.UserStore;
+import codeu.model.data.user.UserGroup;
 import java.time.Instant;
 import java.util.UUID;
 

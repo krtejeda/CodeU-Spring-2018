@@ -16,7 +16,7 @@ package codeu.model.store.persistence;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
-import codeu.model.data.User;
+import codeu.model.data.user.User;
 import java.util.List;
 
 /**

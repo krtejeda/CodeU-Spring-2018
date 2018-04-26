@@ -1,4 +1,4 @@
-<%@ page import="codeu.model.data.User" %>
+<%@ page import="codeu.model.data.user.User" %>
 <%--
   Copyright 2017 Google Inc.
 

@@ -1,7 +1,7 @@
 package codeu.model.store.basic;
 
-import codeu.model.data.User;
-import codeu.model.data.UserGroup;
+import codeu.model.data.user.User;
+import codeu.model.data.user.UserGroup;
 import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Comparator;
