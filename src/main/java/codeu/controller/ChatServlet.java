@@ -16,14 +16,19 @@ package codeu.controller;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
+import codeu.model.data.user.Chatbot;
+import codeu.model.data.user.ImmutableChatbot;
 import codeu.model.data.user.User;
+import codeu.model.data.user.UserGroup;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -138,6 +143,18 @@ public class ChatServlet extends HttpServlet {
       return;
     }
 
+    // TODO(Elle) chatbot MVP
+    Chatbot chatbot = getChatbotInConversation(conversation);
+    if (chatbot == null) {
+      chatbot =
+          new ImmutableChatbot(
+              UUID.randomUUID(),
+              "Dumb flash",
+              Instant.now(),
+              messageStore);
+    }
+    chatbot.sendMessageToConversation("Hello World!", conversation);
+
     String messageContent = request.getParameter("message");
 
     // this removes any HTML from the message content
@@ -155,5 +172,16 @@ public class ChatServlet extends HttpServlet {
 
     // redirect to a GET request
     response.sendRedirect("/chat/" + conversationTitle);
+  }
+
+  // TODO(Elle) store current members of conversation in Conversation and also update profileServlet
+  private Chatbot getChatbotInConversation(Conversation conversation) {
+    Optional<User> chatbot =
+        messageStore.getMessagesInConversation(conversation.id)
+            .stream()
+            .map(message -> userStore.getUser(message.getAuthorId()))
+            .filter(user -> user.group() == UserGroup.BOTS)
+            .findAny();
+    return chatbot.isPresent() ? (Chatbot) chatbot.get() : null;
   }
 }
