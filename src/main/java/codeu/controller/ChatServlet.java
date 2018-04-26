@@ -28,7 +28,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -180,7 +179,7 @@ public class ChatServlet extends HttpServlet {
         messageStore.getMessagesInConversation(conversation.id)
             .stream()
             .map(message -> userStore.getUser(message.getAuthorId()))
-            .filter(user -> user.group() == UserGroup.BOTS)
+            .filter(user -> user.group() == UserGroup.BOT)
             .findAny();
     return chatbot.isPresent() ? (Chatbot) chatbot.get() : null;
   }

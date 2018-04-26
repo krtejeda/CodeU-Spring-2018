@@ -4,7 +4,7 @@ public enum UserGroup {
   ROOT(0),
   ADMIN(1),
   REGULAR_USER(2),
-  BOTS(3);
+  BOT(3);
 
   private int id;
 
