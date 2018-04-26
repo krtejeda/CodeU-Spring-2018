@@ -14,9 +14,9 @@
 
 package codeu.model.data.user;
 
-import codeu.model.data.user.UserGroup;
 import java.time.Instant;
 import java.util.UUID;
+import org.mindrot.jbcrypt.BCrypt;
 
 /** Class representing a registered user. */
 public class User {
