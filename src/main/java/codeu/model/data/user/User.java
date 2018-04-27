@@ -77,8 +77,14 @@ public class User {
 
   /**
    * Returns the password of this User.
+   *
+   * @throws IllegalAccessException if User's group is {@code UserGroup.BOT}
    */
-  public String getPassword() {
+  public String getPassword() throws IllegalAccessException {
+    if (group == UserGroup.BOT) {
+      throw new IllegalAccessException();
+    }
+
     return password;
   }
 
