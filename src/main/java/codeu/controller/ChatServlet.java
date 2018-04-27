@@ -17,7 +17,7 @@ package codeu.controller;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.user.Chatbot;
-import codeu.model.data.user.ImmutableChatbot;
+import codeu.model.data.user.HelloChatbot;
 import codeu.model.data.user.User;
 import codeu.model.data.user.UserGroup;
 import codeu.model.store.basic.ConversationStore;
@@ -142,23 +142,32 @@ public class ChatServlet extends HttpServlet {
       return;
     }
 
+    String messageContent = request.getParameter("message");
+
     // TODO(Elle) chatbot MVP
     Chatbot chatbot = getChatbotInConversation(conversation);
     if (chatbot == null) {
-      chatbot =
-          new ImmutableChatbot(
-              UUID.randomUUID(),
-              "Dumb flash",
-              Instant.now(),
-              messageStore);
+      chatbot = new HelloChatbot(UUID.randomUUID(),"Jarvis", Instant.now());
     }
-    chatbot.sendMessageToConversation("Hello World!", conversation);
+    sendMessageToConversation(
+        chatbot,
+        chatbot.respondToMessageFrom(user, messageContent),
+        conversation);
+    sendMessageToConversation(
+        user,
+        messageContent,
+        conversation);
 
-    String messageContent = request.getParameter("message");
+    // redirect to a GET request
+    response.sendRedirect("/chat/" + conversationTitle);
+  }
 
-    // this removes any HTML from the message content
+  private void sendMessageToConversation(
+      User user,
+      String messageContent,
+      Conversation conversation)
+  {
     String cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
-
     Message message =
         new Message(
             UUID.randomUUID(),
@@ -166,11 +175,7 @@ public class ChatServlet extends HttpServlet {
             user.getId(),
             cleanedMessageContent,
             Instant.now());
-
     messageStore.addMessage(message);
-
-    // redirect to a GET request
-    response.sendRedirect("/chat/" + conversationTitle);
   }
 
   // TODO(Elle) store current members of conversation in Conversation and also update profileServlet
