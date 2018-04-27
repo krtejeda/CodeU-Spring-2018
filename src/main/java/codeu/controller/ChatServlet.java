@@ -17,7 +17,7 @@ package codeu.controller;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.user.Chatbot;
-import codeu.model.data.user.HelloChatbot;
+import codeu.model.data.user.chatbot.HelloChatbot;
 import codeu.model.data.user.User;
 import codeu.model.data.user.UserGroup;
 import codeu.model.store.basic.ConversationStore;
