@@ -16,6 +16,7 @@ package codeu.controller;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
+import codeu.model.data.user.Chatbot;
 import codeu.model.data.user.User;
 import codeu.model.data.user.UserGroup;
 import codeu.model.store.basic.ConversationStore;
@@ -39,6 +40,8 @@ import org.mockito.Mockito;
 
 public class ChatServletTest {
 
+  private static final String CHATBOT_RESPONSE = "Hello World";
+
   private ChatServlet chatServlet;
   private HttpServletRequest mockRequest;
   private HttpSession mockSession;
@@ -50,8 +53,6 @@ public class ChatServletTest {
 
   @Before
   public void setup() {
-    chatServlet = new ChatServlet();
-
     mockRequest = Mockito.mock(HttpServletRequest.class);
     mockSession = Mockito.mock(HttpSession.class);
     Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
@@ -60,7 +61,10 @@ public class ChatServletTest {
     mockRequestDispatcher = Mockito.mock(RequestDispatcher.class);
     Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/chat.jsp"))
         .thenReturn(mockRequestDispatcher);
+  }
 
+  private void setupActualChatServlet() {
+    chatServlet = new ChatServlet();
     mockConversationStore = Mockito.mock(ConversationStore.class);
     chatServlet.setConversationStore(mockConversationStore);
 
@@ -73,6 +77,7 @@ public class ChatServletTest {
 
   @Test
   public void testDoGet() throws IOException, ServletException {
+    setupActualChatServlet();
     Mockito.when(mockRequest.getRequestURI()).thenReturn("/chat/test_conversation");
 
     UUID fakeConversationId = UUID.randomUUID();
@@ -101,6 +106,7 @@ public class ChatServletTest {
 
   @Test
   public void testDoGet_badConversation() throws IOException, ServletException {
+    setupActualChatServlet();
     Mockito.when(mockRequest.getRequestURI()).thenReturn("/chat/bad_conversation");
     Mockito.when(mockConversationStore.getConversationWithTitle("bad_conversation"))
         .thenReturn(null);
@@ -112,6 +118,7 @@ public class ChatServletTest {
 
   @Test
   public void testDoPost_UserNotLoggedIn() throws IOException, ServletException {
+    setupActualChatServlet();
     Mockito.when(mockSession.getAttribute("user")).thenReturn(null);
 
     chatServlet.doPost(mockRequest, mockResponse);
@@ -122,6 +129,7 @@ public class ChatServletTest {
 
   @Test
   public void testDoPost_InvalidUser() throws IOException, ServletException {
+    setupActualChatServlet();
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
     Mockito.when(mockUserStore.getUser("test_username")).thenReturn(null);
 
@@ -133,6 +141,7 @@ public class ChatServletTest {
 
   @Test
   public void testDoPost_ConversationNotFound() throws IOException, ServletException {
+    setupActualChatServlet();
     Mockito.when(mockRequest.getRequestURI()).thenReturn("/chat/test_conversation");
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
 
@@ -154,8 +163,31 @@ public class ChatServletTest {
     Mockito.verify(mockResponse).sendRedirect("/conversations");
   }
 
+  private void setMockChatServlet() {
+    chatServlet = Mockito.mock(ChatServlet.class);
+
+    mockConversationStore = Mockito.mock(ConversationStore.class);
+    Mockito.doCallRealMethod()
+        .when(chatServlet)
+        .setConversationStore(mockConversationStore);
+    chatServlet.setConversationStore(mockConversationStore);
+
+    mockMessageStore = Mockito.mock(MessageStore.class);
+    Mockito.doCallRealMethod()
+        .when(chatServlet)
+        .setMessageStore(mockMessageStore);
+    chatServlet.setMessageStore(mockMessageStore);
+
+    mockUserStore = Mockito.mock(UserStore.class);
+    Mockito.doCallRealMethod()
+        .when(chatServlet)
+        .setUserStore(mockUserStore);
+    chatServlet.setUserStore(mockUserStore);
+  }
+
   @Test
   public void testDoPost_StoresMessage() throws IOException, ServletException {
+    setMockChatServlet();
     Mockito.when(mockRequest.getRequestURI()).thenReturn("/chat/test_conversation");
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
 
@@ -175,19 +207,28 @@ public class ChatServletTest {
 
     Mockito.when(mockRequest.getParameter("message")).thenReturn("Test message.");
 
+    Chatbot mockChatbot = Mockito.mock(Chatbot.class);
+    Mockito.when(chatServlet.getChatbotInConversation(fakeConversation))
+        .thenReturn(mockChatbot);
+    Mockito.when(mockChatbot.respondToMessageFrom(fakeUser, "Test message."))
+        .thenReturn(CHATBOT_RESPONSE);
+
+    Mockito.doCallRealMethod()
+        .when(chatServlet)
+        .doPost(mockRequest, mockResponse);
     chatServlet.doPost(mockRequest, mockResponse);
 
-    ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
-    Mockito.verify(mockMessageStore).addMessage(messageArgumentCaptor.capture());
-    Assert.assertEquals("Test message.", messageArgumentCaptor.getValue().getContent());
-
+    Mockito.inOrder(chatServlet);
+    Mockito.verify(chatServlet)
+        .sendMessageToConversation(fakeUser, "Test message.", fakeConversation);
+    Mockito.verify(chatServlet)
+        .sendMessageToConversation(mockChatbot, "Hello World", fakeConversation);
     Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
   }
 
   @Test
-  public void testDoPost_CleansHtmlContent() throws IOException, ServletException {
-    Mockito.when(mockRequest.getRequestURI()).thenReturn("/chat/test_conversation");
-    Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
+  public void testSendMessageToConversation_CleansHtmlContent_User() {
+    setMockChatServlet();
 
     User fakeUser = new User(
         UUID.randomUUID(),
@@ -195,23 +236,53 @@ public class ChatServletTest {
         "password",
         Instant.now(),
         UserGroup.REGULAR_USER);
-    Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
 
     Conversation fakeConversation =
-        new Conversation(UUID.randomUUID(), UUID.randomUUID(), "test_conversation", Instant.now());
-    Mockito.when(mockConversationStore.getConversationWithTitle("test_conversation"))
-        .thenReturn(fakeConversation);
+        new Conversation(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            "test_conversation",
+            Instant.now());
 
-    Mockito.when(mockRequest.getParameter("message"))
-        .thenReturn("Contains <b>html</b> and <script>JavaScript</script> content.");
+    String messageContentHtml = "Contains <b>html</b> and <script>JavaScript</script> content.";
+    String messageContentClean = "Contains html and  content.";
 
-    chatServlet.doPost(mockRequest, mockResponse);
+    Mockito.doCallRealMethod()
+        .when(chatServlet)
+        .sendMessageToConversation(fakeUser, messageContentHtml, fakeConversation);
+    chatServlet.sendMessageToConversation(fakeUser, messageContentHtml, fakeConversation);
 
     ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
     Mockito.verify(mockMessageStore).addMessage(messageArgumentCaptor.capture());
     Assert.assertEquals(
-        "Contains html and  content.", messageArgumentCaptor.getValue().getContent());
+        messageContentClean,
+        messageArgumentCaptor.getValue().getContent());
+  }
 
-    Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
+  @Test
+  public void testSendMessageToConversation_Chatbot() {
+    setMockChatServlet();
+
+    Conversation fakeConversation =
+        new Conversation(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            "test_conversation",
+            Instant.now());
+
+    Chatbot fakeChatbot = Mockito.mock(Chatbot.class);
+    Mockito.when(chatServlet.getChatbotInConversation(fakeConversation))
+        .thenReturn(fakeChatbot);
+
+    Mockito.doCallRealMethod()
+        .when(chatServlet)
+        .sendMessageToConversation(fakeChatbot, CHATBOT_RESPONSE, fakeConversation);
+    chatServlet.sendMessageToConversation(fakeChatbot, CHATBOT_RESPONSE, fakeConversation);
+
+    ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
+    Mockito.verify(mockMessageStore).addMessage(messageArgumentCaptor.capture());
+    Assert.assertEquals(
+        CHATBOT_RESPONSE,
+        messageArgumentCaptor.getValue().getContent());
   }
 }

@@ -17,9 +17,10 @@ package codeu.controller;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.user.Chatbot;
-import codeu.model.data.user.chatbot.HelloChatbot;
 import codeu.model.data.user.User;
 import codeu.model.data.user.UserGroup;
+import codeu.model.data.user.UserInterface;
+import codeu.model.data.user.chatbot.HelloChatbot;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
@@ -150,20 +151,20 @@ public class ChatServlet extends HttpServlet {
       chatbot = new HelloChatbot(UUID.randomUUID(),"Jarvis", Instant.now());
     }
     sendMessageToConversation(
-        chatbot,
-        chatbot.respondToMessageFrom(user, messageContent),
-        conversation);
-    sendMessageToConversation(
         user,
         messageContent,
+        conversation);
+    sendMessageToConversation(
+        chatbot,
+        chatbot.respondToMessageFrom(user, messageContent),
         conversation);
 
     // redirect to a GET request
     response.sendRedirect("/chat/" + conversationTitle);
   }
 
-  private void sendMessageToConversation(
-      User user,
+  public void sendMessageToConversation(
+      UserInterface user,
       String messageContent,
       Conversation conversation)
   {
@@ -179,7 +180,7 @@ public class ChatServlet extends HttpServlet {
   }
 
   // TODO(Elle) store current members of conversation in Conversation and also update profileServlet
-  private Chatbot getChatbotInConversation(Conversation conversation) {
+  public Chatbot getChatbotInConversation(Conversation conversation) {
     Optional<User> chatbot =
         messageStore.getMessagesInConversation(conversation.id)
             .stream()
