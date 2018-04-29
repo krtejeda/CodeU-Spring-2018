@@ -17,6 +17,7 @@ public interface UserInterface {
   /** Returns the creation time of this User. */
   Instant getCreationTime();
 
+  // TODO remove description and make description store
   /** Returns description of this User. */
   String getDescription();
 

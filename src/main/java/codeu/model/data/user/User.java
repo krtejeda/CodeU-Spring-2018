@@ -19,13 +19,13 @@ import java.util.UUID;
 import org.mindrot.jbcrypt.BCrypt;
 
 /** Class representing a registered user. */
-public class User {
-  private final UUID id;
-  private final String name;
-  private String password;
-  private final Instant creation;
-  private String description;
-  private UserGroup group;
+public class User implements UserInterface {
+  protected final UUID id;
+  protected final String name;
+  protected final String password;
+  protected final Instant creation;
+  protected String description;
+  protected UserGroup group;
 
   /** TODO(Elle) create a builder pattern for user
    * Constructs a new User.
@@ -75,16 +75,8 @@ public class User {
     return name;
   }
 
-  /**
-   * Returns the password of this User.
-   *
-   * @throws IllegalAccessException if User's group is {@code UserGroup.BOT}
-   */
-  public String getPassword() throws IllegalAccessException {
-    if (group == UserGroup.BOT) {
-      throw new IllegalAccessException();
-    }
-
+  /** Returns the password of this User. */
+  public String getPassword() {
     return password;
   }
 
