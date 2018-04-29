@@ -19,7 +19,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 /** Class representing a registered user. */
-public class User {
+public class User implements UserInterface {
   protected final UUID id;
   protected final String name;
   protected final String password;
@@ -75,16 +75,8 @@ public class User {
     return name;
   }
 
-  /**
-   * Returns the password of this User.
-   *
-   * @throws IllegalAccessException if User's group is {@code UserGroup.BOT}
-   */
-  public String getPassword() throws IllegalAccessException {
-    if (group == UserGroup.BOT) {
-      throw new IllegalAccessException();
-    }
-
+  /** Returns the password of this User. */
+  public String getPassword() {
     return password;
   }
 
