@@ -47,11 +47,6 @@ public class HelloChatbot implements Chatbot {
     this.description = description;
   }
 
-  @Override
-  public UserGroup group() {
-    return UserGroup.BOT;
-  }
-
   public String respondToMessageFrom(User sender, String messageContent) {
     return "Hello " + sender.getName() + "!";
   }
