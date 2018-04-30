@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -209,7 +210,7 @@ public class ChatServletTest {
 
     Chatbot mockChatbot = Mockito.mock(Chatbot.class);
     Mockito.when(chatServlet.getChatbotInConversation(fakeConversation))
-        .thenReturn(mockChatbot);
+        .thenReturn(Optional.of(mockChatbot));
     Mockito.when(mockChatbot.respondToMessageFrom(fakeUser, "Test message."))
         .thenReturn(CHATBOT_RESPONSE);
 
@@ -272,7 +273,7 @@ public class ChatServletTest {
 
     Chatbot fakeChatbot = Mockito.mock(Chatbot.class);
     Mockito.when(chatServlet.getChatbotInConversation(fakeConversation))
-        .thenReturn(fakeChatbot);
+        .thenReturn(Optional.of(fakeChatbot));
 
     Mockito.doCallRealMethod()
         .when(chatServlet)

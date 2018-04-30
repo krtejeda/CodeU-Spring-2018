@@ -81,9 +81,9 @@ public class ChatbotStore {
   }
 
   /**
-   * Access the User object with the given UUID.
+   * Access the Chatbot object with the given UUID.
    *
-   * @return null if the UUID does not match any existing User.
+   * @return null if the UUID does not match any existing Chatbot.
    */
   public Chatbot getChatbot(UUID id) {
     for (Chatbot chatbot : chatbots) {
@@ -92,6 +92,20 @@ public class ChatbotStore {
       }
     }
     return null;
+  }
+
+  /**
+   * Returns true if there exists a Chatbot object with the given UUID.
+   *
+   * @return false if the UUID does not match any existing Chatbot.
+   */
+  public boolean isChatbot(UUID id) {
+    for (Chatbot chatbot : chatbots) {
+      if (chatbot.getId().equals(id)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /** Add a new chatbot to the current set of chatbots known to the application. */

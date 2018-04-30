@@ -27,7 +27,7 @@ public class HelloChatbot implements Chatbot {
 
   @Override
   public String getName() {
-    return name;
+    return name + "Bot";
   }
 
   @Override
