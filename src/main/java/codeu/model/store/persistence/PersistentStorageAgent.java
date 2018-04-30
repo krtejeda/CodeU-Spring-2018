@@ -17,6 +17,7 @@ package codeu.model.store.persistence;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.user.User;
+import codeu.model.data.user.chatbot.Chatbot;
 import java.util.List;
 
 /**
@@ -69,6 +70,16 @@ public class PersistentStorageAgent {
   }
 
   /**
+   * Retrieve all Chatbot objects from the Datastore service. The returned list may be empty.
+   *
+   * @throws PersistentDataStoreException if an error was detected during the load from the
+   *     Datastore service
+   */
+  public List<Chatbot> loadChatbots() throws PersistentDataStoreException {
+    return persistentDataStore.loadChatbots();
+  }
+
+  /**
    * Retrieve all Conversation objects from the Datastore service. The returned list may be empty.
    *
    * @throws PersistentDataStoreException if an error was detected during the load from the
@@ -91,6 +102,11 @@ public class PersistentStorageAgent {
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
     persistentDataStore.writeThrough(user);
+  }
+
+  /** Write a Chatbot object to the Datastore service. */
+  public void writeThrough(Chatbot chatbot) {
+    persistentDataStore.writeThrough(chatbot);
   }
 
   /** Write a Message object to the Datastore service. */

@@ -18,6 +18,8 @@ import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.user.User;
 import codeu.model.data.user.UserGroup;
+import codeu.model.data.user.chatbot.Chatbot;
+import codeu.model.data.user.chatbot.HelloChatbot;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -89,6 +91,44 @@ public class PersistentDataStore {
     }
 
     return users;
+  }
+
+  /**
+   * Loads all Chatbot objects from the Datastore service and returns them in a List.
+   *
+   * @throws PersistentDataStoreException if an error was detected during the load from the
+   *     Datastore service
+   */
+  public List<Chatbot> loadChatbots() throws PersistentDataStoreException {
+
+    List<Chatbot> chatbots = new ArrayList<>();
+
+    // Retrieve all chatbots from the datastore.
+    Query query = new Query("chatbots");
+    PreparedQuery results = datastore.prepare(query);
+
+    for (Entity entity : results.asIterable()) {
+      try {
+        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+        String name = (String) entity.getProperty("name");
+        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+        String description = entity.getProperty("description") != null ?
+            (String) entity.getProperty("description") :
+            User.getDefaultDescription(name);
+        Chatbot chatbot = new HelloChatbot(
+            uuid,
+            name,
+            creationTime); // TODO change this to more general chatbot so more than one concrete chatbot is allowed
+        chatbots.add(chatbot);
+      } catch (Exception e) {
+        // In a production environment, errors should be very rare. Errors which may
+        // occur include network errors, Datastore service errors, authorization errors,
+        // database entity definition mismatches, or service mismatches.
+        throw new PersistentDataStoreException(e);
+      }
+    }
+
+    return chatbots;
   }
 
   /**
@@ -168,6 +208,16 @@ public class PersistentDataStore {
     userEntity.setProperty("description", user.getDescription().toString());
     userEntity.setProperty("isAdmin", user.group() == UserGroup.ADMIN);
     datastore.put(userEntity);
+  }
+
+  /** Write a User object to the Datastore service. */
+  public void writeThrough(Chatbot chatbot) {
+    Entity chatbotEntity = new Entity("chatbots");
+    chatbotEntity.setProperty("uuid", chatbot.getId().toString());
+    chatbotEntity.setProperty("name", chatbot.getName());
+    chatbotEntity.setProperty("creation_time", chatbot.getCreationTime().toString());
+    chatbotEntity.setProperty("description", chatbot.getDescription().toString());
+    datastore.put(chatbotEntity);
   }
 
   /** Write a Message object to the Datastore service. */

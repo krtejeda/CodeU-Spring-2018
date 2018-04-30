@@ -1,5 +1,6 @@
 package codeu.controller;
 
+import codeu.model.data.user.chatbot.Chatbot;
 import codeu.model.store.basic.AdminStore;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
@@ -26,6 +27,8 @@ public class ServerStartupListener implements ServletContextListener {
       List<User> users = PersistentStorageAgent.getInstance().loadUsers();
       UserStore.getInstance().setUsers(users);
       AdminStore.getInstance(UserStore.getInstance());
+      List<Chatbot> chatbots = PersistentStorageAgent.getInstance().loadChatbots();
+      // TODO set chatbot store
 
       List<Conversation> conversations = PersistentStorageAgent.getInstance().loadConversations();
       ConversationStore.getInstance().setConversations(conversations);
