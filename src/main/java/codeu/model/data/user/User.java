@@ -14,12 +14,11 @@
 
 package codeu.model.data.user;
 
-import codeu.model.data.user.UserGroup;
 import java.time.Instant;
 import java.util.UUID;
 
 /** Class representing a registered user. */
-public class User implements UserInterface {
+public class User implements MessageSender {
   protected final UUID id;
   protected final String name;
   protected final String password;

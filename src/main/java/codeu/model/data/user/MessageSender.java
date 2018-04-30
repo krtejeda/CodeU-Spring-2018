@@ -4,9 +4,9 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
- * Represents a registered user
+ * Represents something that is able to send messages to a chat
  */
-public interface UserInterface {
+public interface MessageSender {
 
   /** Returns the ID of this User. */
   UUID getId();
