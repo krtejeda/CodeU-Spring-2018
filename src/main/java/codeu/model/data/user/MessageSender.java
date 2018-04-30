@@ -17,13 +17,6 @@ public interface MessageSender {
   /** Returns the creation time of this User. */
   Instant getCreationTime();
 
-  // TODO remove description and make description store
-  /** Returns description of this User. */
-  String getDescription();
-
-  /** Sets description of this User. */
-  void setDescription(String description);
-
   /** Returns UserGroup of this User. */
   UserGroup group();
 }

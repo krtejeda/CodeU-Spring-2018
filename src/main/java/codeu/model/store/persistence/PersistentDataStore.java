@@ -112,9 +112,6 @@ public class PersistentDataStore {
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         String name = (String) entity.getProperty("name");
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        String description = entity.getProperty("description") != null ?
-            (String) entity.getProperty("description") :
-            User.getDefaultDescription(name);
         Chatbot chatbot = new HelloChatbot(
             uuid,
             name,
@@ -216,7 +213,6 @@ public class PersistentDataStore {
     chatbotEntity.setProperty("uuid", chatbot.getId().toString());
     chatbotEntity.setProperty("name", chatbot.getName());
     chatbotEntity.setProperty("creation_time", chatbot.getCreationTime().toString());
-    chatbotEntity.setProperty("description", chatbot.getDescription().toString());
     datastore.put(chatbotEntity);
   }
 
