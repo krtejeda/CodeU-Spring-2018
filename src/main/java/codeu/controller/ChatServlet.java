@@ -18,7 +18,6 @@ import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.user.chatbot.Chatbot;
 import codeu.model.data.user.User;
-import codeu.model.data.user.UserGroup;
 import codeu.model.data.user.MessageSender;
 import codeu.model.data.user.chatbot.HelloChatbot;
 import codeu.model.store.basic.ChatbotStore;

@@ -72,14 +72,14 @@ public class PersistentDataStore {
         String description = entity.getProperty("description") != null ?
             (String) entity.getProperty("description") :
             User.getDefaultDescription(userName);
-        UserGroup group = (UserGroup) entity.getProperty("group") ;
+        UserGroup group = Enum.valueOf(UserGroup.class, (String) entity.getProperty("group"));
         User user = new User(
             uuid,
             userName,
             password,
             creationTime,
             description,
-            group); // TODO(Elle) delete local datastore so no user with null group
+            group);
         users.add(user);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -202,7 +202,7 @@ public class PersistentDataStore {
     userEntity.setProperty("password", user.getPassword());
     userEntity.setProperty("creation_time", user.getCreationTime().toString());
     userEntity.setProperty("description", user.getDescription().toString());
-    userEntity.setProperty("isAdmin", user.group() == UserGroup.ADMIN);
+    userEntity.setProperty("group", user.group().toString());
     datastore.put(userEntity);
   }
 
@@ -242,16 +242,6 @@ public class PersistentDataStore {
   public boolean updateUserDescription(String username, String description) {
     return new UpdateUserPersistentDatastore.Builder(datastore, username)
         .setNewDescription(description)
-        .build()
-        .update();
-  }
-
-  /**
-   * Modify User's isAdmin
-   */
-  public boolean updateUserIsAdmin(String username, boolean isAdmin) {
-    return new UpdateUserPersistentDatastore.Builder(datastore, username)
-        .setNewIsAdmin(isAdmin)
         .build()
         .update();
   }

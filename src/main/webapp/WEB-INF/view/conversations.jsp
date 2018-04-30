@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
-<%@ page import="java.util.List" %>
 <%@ page import="codeu.model.data.Conversation" %>
+<%@ page import="java.util.List" %>
 
 <!DOCTYPE html>
 <html>
@@ -37,12 +37,7 @@
       <a href="/register">Register</a>
     <% } %>
     <a href="/about.jsp">About</a>
-    <%
-      Boolean isAdmin = (Boolean) request.getSession().getAttribute("isAdmin");
-      if (isAdmin != null && isAdmin) {
-    %>
-      <a href="/testdata">Load Test Data</a>
-    <% } %>
+    <a href="/testdata">Load Test Data</a>
   </nav>
 
   <div id="container">

@@ -14,6 +14,8 @@
 
 package codeu.controller;
 
+import codeu.model.data.user.User;
+import codeu.model.data.user.UserGroup;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
@@ -75,6 +77,22 @@ public class TestDataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
+    String username = (String) request.getSession().getAttribute("user");
+    if (username == null) {
+      // user is not logged in, don't let them add a message
+      response.sendRedirect("/login");
+      return;
+    }
+
+    User user = userStore.getUser(username);
+    if (user == null) {
+      // user was not found, don't let them add a message
+      response.sendRedirect("/login");
+      return;
+    }
+
+    boolean isAdmin = user.group() == UserGroup.ADMIN || user.group() == UserGroup.ROOT;
+    request.setAttribute("isAdmin", isAdmin);
     request.getRequestDispatcher("/WEB-INF/view/testdata.jsp").forward(request, response);
   }
 

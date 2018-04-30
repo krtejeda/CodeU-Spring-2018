@@ -14,10 +14,14 @@
 
 package codeu.controller;
 
+import codeu.model.data.user.User;
+import codeu.model.data.user.UserGroup;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
+import java.time.Instant;
+import java.util.UUID;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -62,10 +66,81 @@ public class TestDataServletTest {
   }
 
   @Test
-  public void testDoGet() throws IOException, ServletException {
+  public void testDoGet_RegularUser() throws IOException, ServletException {
+    User fakeUser =
+        new User(
+            UUID.randomUUID(),
+            "test_username",
+            "password",
+            Instant.now(),
+            UserGroup.REGULAR_USER);
+    Mockito.when(mockSession.getAttribute("user")).thenReturn(fakeUser.getName());
+    Mockito.when(mockUserStore.getUser(fakeUser.getName())).thenReturn(fakeUser);
+
     testDataServlet.doGet(mockRequest, mockResponse);
 
+    Mockito.verify(mockRequest).setAttribute("isAdmin", false);
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
+  }
+
+  @Test
+  public void testDoGet_AdminUser() throws IOException, ServletException {
+    User fakeUser =
+        new User(
+            UUID.randomUUID(),
+            "test_username",
+            "password",
+            Instant.now(),
+            UserGroup.ADMIN);
+    Mockito.when(mockSession.getAttribute("user")).thenReturn(fakeUser.getName());
+    Mockito.when(mockUserStore.getUser(fakeUser.getName())).thenReturn(fakeUser);
+
+    testDataServlet.doGet(mockRequest, mockResponse);
+
+    Mockito.verify(mockRequest).setAttribute("isAdmin", true);
+    Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
+  }
+
+  @Test
+  public void testDoGet_RootUser() throws IOException, ServletException {
+    User fakeUser =
+        new User(
+            UUID.randomUUID(),
+            "test_username",
+            "password",
+            Instant.now(),
+            UserGroup.ROOT);
+    Mockito.when(mockSession.getAttribute("user")).thenReturn(fakeUser.getName());
+    Mockito.when(mockUserStore.getUser(fakeUser.getName())).thenReturn(fakeUser);
+
+    testDataServlet.doGet(mockRequest, mockResponse);
+
+    Mockito.verify(mockRequest).setAttribute("isAdmin", true);
+    Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
+  }
+
+  @Test
+  public void testDoGet_UserNotLoggedIn() throws IOException, ServletException {
+    testDataServlet.doGet(mockRequest, mockResponse);
+
+    Mockito.verify(mockResponse).sendRedirect("/login");
+  }
+
+  @Test
+  public void testDoGet_UseNotFound() throws IOException, ServletException {
+    User fakeUser =
+        new User(
+            UUID.randomUUID(),
+            "test_username",
+            "password",
+            Instant.now(),
+            UserGroup.REGULAR_USER);
+    Mockito.when(mockSession.getAttribute("user")).thenReturn(fakeUser.getName());
+    Mockito.when(mockUserStore.getUser(fakeUser.getName())).thenReturn(null);
+
+    testDataServlet.doGet(mockRequest, mockResponse);
+
+    Mockito.verify(mockResponse).sendRedirect("/login");
   }
 
   @Test
