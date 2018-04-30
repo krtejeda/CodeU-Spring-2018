@@ -1,6 +1,5 @@
 package codeu.model.data.user.chatbot;
 
-import codeu.model.data.user.Chatbot;
 import codeu.model.data.user.User;
 import codeu.model.data.user.UserGroup;
 import java.time.Instant;

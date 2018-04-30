@@ -19,7 +19,7 @@ import java.util.UUID;
 import org.mindrot.jbcrypt.BCrypt;
 
 /** Class representing a registered user. */
-public class User implements UserInterface {
+public class User implements MessageSender {
   protected final UUID id;
   protected final String name;
   protected final String password;
