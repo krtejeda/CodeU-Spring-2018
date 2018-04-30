@@ -21,6 +21,7 @@ import codeu.model.data.user.User;
 import codeu.model.data.user.UserGroup;
 import codeu.model.data.user.MessageSender;
 import codeu.model.data.user.chatbot.HelloChatbot;
+import codeu.model.store.basic.ChatbotStore;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
@@ -48,6 +49,9 @@ public class ChatServlet extends HttpServlet {
   /** Store class that gives access to Users. */
   private UserStore userStore;
 
+  /** Store class that gives access to Chatbots. */
+  private ChatbotStore chatbotStore;
+
   /** Set up state for handling chat requests. */
   @Override
   public void init() throws ServletException {
@@ -55,6 +59,7 @@ public class ChatServlet extends HttpServlet {
     setConversationStore(ConversationStore.getInstance());
     setMessageStore(MessageStore.getInstance());
     setUserStore(UserStore.getInstance());
+    setChatbotStore(ChatbotStore.getInstance());
   }
 
   /**
@@ -79,6 +84,15 @@ public class ChatServlet extends HttpServlet {
    */
   void setUserStore(UserStore userStore) {
     this.userStore = userStore;
+  }
+
+  /**
+   * Sets the ChatbotStore used by this servlet.
+   * This function provides a common setup method for use
+   * by the test framework or the servlet's init() function.
+   */
+  void setChatbotStore(ChatbotStore chatbotStore) {
+    this.chatbotStore = chatbotStore;
   }
 
   /**
@@ -148,7 +162,8 @@ public class ChatServlet extends HttpServlet {
     // TODO(Elle) chatbot MVP
     Chatbot chatbot = getChatbotInConversation(conversation);
     if (chatbot == null) {
-      chatbot = new HelloChatbot(UUID.randomUUID(),"Jarvis", Instant.now());
+      chatbot = new HelloChatbot(UUID.randomUUID(), "Jarvis", Instant.now());
+      chatbotStore.addChatbot(chatbot);
     }
     sendMessageToConversation(
         user,
