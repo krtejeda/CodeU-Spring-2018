@@ -68,7 +68,6 @@ public class PersistentDataStore {
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         String userName = (String) entity.getProperty("username");
         String password = (String) entity.getProperty("password");
-        String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
         String description = entity.getProperty("description") != null ?
             (String) entity.getProperty("description") :
