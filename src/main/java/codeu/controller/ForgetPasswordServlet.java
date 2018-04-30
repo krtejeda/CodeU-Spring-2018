@@ -1,12 +1,12 @@
 package codeu.controller;
 
+import codeu.model.data.user.User;
+import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import codeu.model.store.basic.UserStore;
-import codeu.model.data.User;
 
 /**
  * Servlet class responsible for forget/reset password page

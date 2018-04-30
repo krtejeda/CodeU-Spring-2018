@@ -1,13 +1,13 @@
 package codeu.controller;
 
-import codeu.model.data.User;
+import codeu.model.data.user.User;
+import codeu.model.data.user.UserGroup;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +30,8 @@ public class ForgetPasswordServletTest {
       UUID.randomUUID(),
       TEST_USERNAME,
       TEST_PASSWORD_HASH,
-      Instant.now());
+      Instant.now(),
+      UserGroup.REGULAR_USER);
 
   @Before
   public void setup() {

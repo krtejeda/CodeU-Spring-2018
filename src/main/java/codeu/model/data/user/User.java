@@ -22,7 +22,7 @@ import org.mindrot.jbcrypt.BCrypt;
 public class User implements MessageSender {
   private final UUID id;
   private final String name;
-  private final String password;
+  private String password;
   private final Instant creation;
   private String description;
   private UserGroup group;

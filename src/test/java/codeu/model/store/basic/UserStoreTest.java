@@ -169,7 +169,8 @@ public class UserStoreTest {
                 UUID.randomUUID(),
                 "test_username_three",
                 "password",
-                Instant.now());
+                Instant.now(),
+                UserGroup.REGULAR_USER);
     String newPassword = "new password";
     userStore = Mockito.mock(UserStore.class);
     Mockito
