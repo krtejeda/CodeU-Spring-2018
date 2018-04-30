@@ -160,18 +160,19 @@ public class ChatServlet extends HttpServlet {
     String messageContent = request.getParameter("message");
 
     // TODO(Elle) chatbot MVP
-    Chatbot chatbot = getChatbotInConversation(conversation);
-    if (chatbot == null) {
-      chatbot = new HelloChatbot(UUID.randomUUID(), "Jarvis", Instant.now());
-      chatbotStore.addChatbot(chatbot);
+    Optional<Chatbot> chatbot = getChatbotInConversation(conversation);
+    if (!chatbot.isPresent()) {
+      chatbot = Optional.of(
+          new HelloChatbot(UUID.randomUUID(), "Jarvis", Instant.now()));
+      chatbotStore.addChatbot(chatbot.get());
     }
     sendMessageToConversation(
         user,
         messageContent,
         conversation);
     sendMessageToConversation(
-        chatbot,
-        chatbot.respondToMessageFrom(user, messageContent),
+        chatbot.get(),
+        chatbot.get().respondToMessageFrom(user, messageContent),
         conversation);
 
     // redirect to a GET request
@@ -195,13 +196,11 @@ public class ChatServlet extends HttpServlet {
   }
 
   // TODO(Elle) store current members of conversation in Conversation and also update profileServlet
-  public Chatbot getChatbotInConversation(Conversation conversation) {
-    Optional<User> chatbot =
-        messageStore.getMessagesInConversation(conversation.id)
-            .stream()
-            .map(message -> userStore.getUser(message.getAuthorId()))
-            .filter(user -> user.group() == UserGroup.BOT)
-            .findAny();
-    return chatbot.isPresent() ? (Chatbot) chatbot.get() : null;
+  public Optional<Chatbot> getChatbotInConversation(Conversation conversation) {
+    return messageStore.getMessagesInConversation(conversation.id)
+        .stream()
+        .filter(message -> chatbotStore.isChatbot(message.getAuthorId()))
+        .map(message -> chatbotStore.getChatbot(message.getAuthorId()))
+        .findAny();
   }
 }

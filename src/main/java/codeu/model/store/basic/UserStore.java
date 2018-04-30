@@ -159,6 +159,16 @@ public class UserStore {
     return false;
   }
 
+  /** Return true if the given username is known to the application. */
+  public boolean isUserRegistered(UUID id) {
+    for (User user : users) {
+      if (user.getId().equals(id)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * Sets the List of Users stored by this UserStore. This should only be called once, when the data
    * is loaded from Datastore.

@@ -13,10 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
-<%@ page import="java.util.List" %>
 <%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.data.Message" %>
+<%@ page import="codeu.model.store.basic.ChatbotStore" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.UUID" %>
 <%
 Conversation conversation = (Conversation) request.getAttribute("conversation");
 List<Message> messages = (List<Message>) request.getAttribute("messages");
@@ -78,11 +80,24 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
       <ul>
     <%
       for (Message message : messages) {
-        String author = UserStore.getInstance()
-          .getUser(message.getAuthorId()).getName();
-    %>
-      <li><strong><a href="/profile/<%=author %>"><%= author %>:</a></strong> <%= message.getContent() %></li>
-    <%
+        UUID authorId = message.getAuthorId();
+        UserStore userStore = UserStore.getInstance();
+        ChatbotStore chatbotStore = ChatbotStore.getInstance();
+        String author;
+        if (userStore.isUserRegistered(authorId)) {
+          author = userStore.getUser(authorId).getName();
+          %>
+            <li>
+              <strong><a href="/profile/<%=author %>"><%= author %>:</a></strong>
+              <%= message.getContent() %>
+            </li>
+          <%
+        } else if (chatbotStore.isChatbot(authorId)) {
+          author = chatbotStore.getChatbot(authorId).getName();
+          %>
+            <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
+          <%
+        }
       }
     %>
       </ul>
