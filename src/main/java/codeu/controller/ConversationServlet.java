@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Servlet class responsible for the conversations page. */
 public class ConversationServlet extends HttpServlet {
+  private static final String CONVERSATION_TITLE_FORMAT = "[\\w*]+";
 
   /** Store class that gives access to Users. */
   private UserStore userStore;
@@ -100,7 +101,7 @@ public class ConversationServlet extends HttpServlet {
     }
 
     String conversationTitle = request.getParameter("conversationTitle");
-    if (!conversationTitle.matches("[\\w*]*")) {
+    if (!conversationTitle.matches(CONVERSATION_TITLE_FORMAT)) {
       request.setAttribute("error", "Please enter only letters and numbers.");
       request.getRequestDispatcher("/WEB-INF/view/conversations.jsp").forward(request, response);
       return;
