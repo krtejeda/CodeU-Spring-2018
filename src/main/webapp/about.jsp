@@ -35,6 +35,11 @@
     <% } %>
     <a href="/about.jsp">About</a>
     <a href="/testdata">Load Test Data</a>
+    <%
+      if (user != null) {
+    %>
+      <a href="/login">Logout</a>
+    <% } %>
   </nav>
 
   <div id="container">
