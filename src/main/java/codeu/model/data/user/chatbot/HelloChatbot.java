@@ -9,7 +9,6 @@ public class HelloChatbot implements Chatbot {
   protected final UUID id;
   protected final String name;
   protected final Instant creation;
-  protected String description;
 
   public HelloChatbot(
       UUID id,
@@ -19,7 +18,6 @@ public class HelloChatbot implements Chatbot {
     this.id = id;
     this.name = name;
     this.creation = creation;
-    this.description = "Bot's description";
   }
 
   @Override
@@ -35,16 +33,6 @@ public class HelloChatbot implements Chatbot {
   @Override
   public Instant getCreationTime() {
     return creation;
-  }
-
-  @Override
-  public String getDescription() {
-    return description;
-  }
-
-  @Override
-  public void setDescription(String description) {
-    this.description = description;
   }
 
   public String respondToMessageFrom(User sender, String messageContent) {
