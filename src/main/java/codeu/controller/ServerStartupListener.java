@@ -27,7 +27,7 @@ public class ServerStartupListener implements ServletContextListener {
     try {
       List<User> users = PersistentStorageAgent.getInstance().loadUsers();
       UserStore.getInstance().setUsers(users);
-      AdminStore.getInstance(UserStore.getInstance());
+      AdminStore.getInstance().setRootFrom(users).setAdminsFrom(users);
       List<Chatbot> chatbots = PersistentStorageAgent.getInstance().loadChatbots();
       ChatbotStore.getInstance().setChatbots(chatbots);
 

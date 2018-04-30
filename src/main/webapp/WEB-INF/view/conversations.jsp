@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
-<%@ page import="java.util.List" %>
 <%@ page import="codeu.model.data.Conversation" %>
+<%@ page import="java.util.List" %>
 
 <!DOCTYPE html>
 <html>

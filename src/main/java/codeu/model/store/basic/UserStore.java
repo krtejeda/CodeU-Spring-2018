@@ -69,10 +69,6 @@ public class UserStore {
     users.addAll(DefaultDataStore.getInstance().getAllUsers());
   }
 
-  List<User> getUsers() {
-    return users;
-  }
-
   public int getUsersCount() {
     return users.size();
   }

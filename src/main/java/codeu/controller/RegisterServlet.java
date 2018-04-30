@@ -1,6 +1,7 @@
 package codeu.controller;
 
 import codeu.model.data.user.UserGroup;
+import codeu.model.store.basic.AdminStore;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,6 +22,8 @@ public class RegisterServlet extends HttpServlet {
    * Store class that gives access to Users.
    */
   private UserStore userStore;
+
+  private AdminStore adminStore;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -56,7 +59,7 @@ public class RegisterServlet extends HttpServlet {
 
     // set first registered user as root
     if (userStore.getUsersCount() == 0) {
-      user.setGroup(UserGroup.ROOT);
+      adminStore.setRoot(user);
     }
 
     userStore.addUser(user);
@@ -72,13 +75,22 @@ public class RegisterServlet extends HttpServlet {
   public void init() throws ServletException {
     super.init();
     setUserStore(UserStore.getInstance());
+    setAdminStore(AdminStore.getInstance());
   }
 
   /**
-   * Sets the UserStore used by this servlet. This function provides a comoon setup method
+   * Sets the UserStore used by this servlet. This function provides a common setup method
    * for use by the test framework or the servlet's init() function.
    */
   void setUserStore(UserStore userStore) {
     this.userStore = userStore;
+  }
+
+  /**
+   * Sets the AdminStore used by this servlet. This function provides a common setup method
+   * for use by the test framework or the servlet's init() function.
+   */
+  void setAdminStore(AdminStore adminStore) {
+    this.adminStore = adminStore;
   }
 }
