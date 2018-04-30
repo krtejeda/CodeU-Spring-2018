@@ -102,8 +102,18 @@ public class ConversationServletTest {
   }
 
   @Test
+  public void testDoPost_EmptyConversationName() throws IOException, ServletException {
+    testDoPost_BadConversationName("");
+  }
+
+  @Test
   public void testDoPost_BadConversationName() throws IOException, ServletException {
-    Mockito.when(mockRequest.getParameter("conversationTitle")).thenReturn("bad !@#$% name");
+    testDoPost_BadConversationName("bad !@#$% name");
+  }
+
+  private void testDoPost_BadConversationName(String conversationName)
+      throws IOException, ServletException {
+    Mockito.when(mockRequest.getParameter("conversationTitle")).thenReturn(conversationName);
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
 
     User fakeUser = new User(
