@@ -3,6 +3,7 @@ package codeu.model.data.user.chatbot;
 import codeu.model.data.user.User;
 import codeu.model.data.user.UserGroup;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 public class HelloChatbot implements Chatbot {
@@ -35,7 +36,8 @@ public class HelloChatbot implements Chatbot {
     return creation;
   }
 
-  public String respondToMessageFrom(User sender, String messageContent) {
-    return "Hello " + sender.getName() + "!";
+  @Override
+  public Optional<String> respondToMessageFrom(User sender, String messageContent) {
+    return Optional.of("Hello " + sender.getName() + "!");
   }
 }

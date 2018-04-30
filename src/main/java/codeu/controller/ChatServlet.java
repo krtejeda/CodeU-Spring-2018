@@ -158,21 +158,25 @@ public class ChatServlet extends HttpServlet {
 
     String messageContent = request.getParameter("message");
 
-    // TODO(Elle) chatbot MVP
     Optional<Chatbot> chatbot = getChatbotInConversation(conversation);
     if (!chatbot.isPresent()) {
       chatbot = Optional.of(
           new HelloChatbot(UUID.randomUUID(), "Jarvis", Instant.now()));
       chatbotStore.addChatbot(chatbot.get());
     }
+
     sendMessageToConversation(
         user,
         messageContent,
         conversation);
-    sendMessageToConversation(
-        chatbot.get(),
-        chatbot.get().respondToMessageFrom(user, messageContent),
-        conversation);
+
+    Optional<String> chatbotResponse = chatbot.get().respondToMessageFrom(user, messageContent);
+    if (chatbotResponse.isPresent()) {
+      sendMessageToConversation(
+          chatbot.get(),
+          chatbotResponse.get(),
+          conversation);
+    }
 
     // redirect to a GET request
     response.sendRedirect("/chat/" + conversationTitle);
