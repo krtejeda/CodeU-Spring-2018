@@ -41,7 +41,8 @@ import org.mockito.Mockito;
 
 public class ChatServletTest {
 
-  private static final String CHATBOT_RESPONSE = "Hello World";
+  private static final String CHATBOT_RESPONSE_NON_EMPTY = "Hello World";
+  private static final String CHATBOT_RESPONSE_EMPTY = "";
 
   private ChatServlet chatServlet;
   private HttpServletRequest mockRequest;
@@ -187,7 +188,7 @@ public class ChatServletTest {
   }
 
   @Test
-  public void testDoPost_StoresMessage() throws IOException, ServletException {
+  public void testDoPost_NonEmptyChatbotResponse() throws IOException, ServletException {
     setMockChatServlet();
     Mockito.when(mockRequest.getRequestURI()).thenReturn("/chat/test_conversation");
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
@@ -212,7 +213,7 @@ public class ChatServletTest {
     Mockito.when(chatServlet.getChatbotInConversation(fakeConversation))
         .thenReturn(Optional.of(mockChatbot));
     Mockito.when(mockChatbot.respondToMessageFrom(fakeUser, "Test message."))
-        .thenReturn(CHATBOT_RESPONSE);
+        .thenReturn(Optional.of(CHATBOT_RESPONSE_NON_EMPTY));
 
     Mockito.doCallRealMethod()
         .when(chatServlet)
@@ -223,7 +224,48 @@ public class ChatServletTest {
     Mockito.verify(chatServlet)
         .sendMessageToConversation(fakeUser, "Test message.", fakeConversation);
     Mockito.verify(chatServlet)
-        .sendMessageToConversation(mockChatbot, "Hello World", fakeConversation);
+        .sendMessageToConversation(mockChatbot, CHATBOT_RESPONSE_NON_EMPTY, fakeConversation);
+    Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
+  }
+
+  @Test
+  public void testDoPost_EmptyChatbotResponse() throws IOException, ServletException {
+    setMockChatServlet();
+    Mockito.when(mockRequest.getRequestURI()).thenReturn("/chat/test_conversation");
+    Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
+
+    User fakeUser =
+        new User(
+            UUID.randomUUID(),
+            "test_username",
+            "password",
+            Instant.now(),
+            UserGroup.REGULAR_USER);
+    Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
+
+    Conversation fakeConversation =
+        new Conversation(UUID.randomUUID(), UUID.randomUUID(), "test_conversation", Instant.now());
+    Mockito.when(mockConversationStore.getConversationWithTitle("test_conversation"))
+        .thenReturn(fakeConversation);
+
+    Mockito.when(mockRequest.getParameter("message")).thenReturn("Test message.");
+
+    Chatbot mockChatbot = Mockito.mock(Chatbot.class);
+    Mockito.when(chatServlet.getChatbotInConversation(fakeConversation))
+        .thenReturn(Optional.of(mockChatbot));
+    Mockito.when(mockChatbot.respondToMessageFrom(fakeUser, "Test message."))
+        .thenReturn(Optional.of(CHATBOT_RESPONSE_EMPTY));
+
+    Mockito.doCallRealMethod()
+        .when(chatServlet)
+        .doPost(mockRequest, mockResponse);
+    chatServlet.doPost(mockRequest, mockResponse);
+
+    Mockito.inOrder(chatServlet);
+    Mockito.verify(chatServlet)
+        .sendMessageToConversation(fakeUser, "Test message.", fakeConversation);
+    Mockito.verify(chatServlet, Mockito.never())
+        .sendMessageToConversation(mockChatbot, CHATBOT_RESPONSE_NON_EMPTY, fakeConversation);
     Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
   }
 
@@ -277,13 +319,13 @@ public class ChatServletTest {
 
     Mockito.doCallRealMethod()
         .when(chatServlet)
-        .sendMessageToConversation(fakeChatbot, CHATBOT_RESPONSE, fakeConversation);
-    chatServlet.sendMessageToConversation(fakeChatbot, CHATBOT_RESPONSE, fakeConversation);
+        .sendMessageToConversation(fakeChatbot, CHATBOT_RESPONSE_NON_EMPTY, fakeConversation);
+    chatServlet.sendMessageToConversation(fakeChatbot, CHATBOT_RESPONSE_NON_EMPTY, fakeConversation);
 
     ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
     Mockito.verify(mockMessageStore).addMessage(messageArgumentCaptor.capture());
     Assert.assertEquals(
-        CHATBOT_RESPONSE,
+        CHATBOT_RESPONSE_NON_EMPTY,
         messageArgumentCaptor.getValue().getContent());
   }
 }
