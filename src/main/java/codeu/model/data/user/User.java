@@ -27,7 +27,7 @@ public class User implements MessageSender {
   private String description;
   private UserGroup group;
 
-  /** TODO(Elle) create a builder pattern for user
+  /**
    * Constructs a new User.
    *
    * @param id the ID of this User
