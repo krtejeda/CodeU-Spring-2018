@@ -20,12 +20,12 @@ import org.mindrot.jbcrypt.BCrypt;
 
 /** Class representing a registered user. */
 public class User implements MessageSender {
-  protected final UUID id;
-  protected final String name;
-  protected final String password;
-  protected final Instant creation;
-  protected String description;
-  protected UserGroup group;
+  private final UUID id;
+  private final String name;
+  private final String password;
+  private final Instant creation;
+  private String description;
+  private UserGroup group;
 
   /** TODO(Elle) create a builder pattern for user
    * Constructs a new User.
