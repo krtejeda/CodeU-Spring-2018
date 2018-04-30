@@ -2,9 +2,12 @@ package codeu.model.store.basic;
 
 import codeu.model.data.user.chatbot.Chatbot;
 import codeu.model.store.persistence.PersistentStorageAgent;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Store class that uses in-memory data structures to hold values and automatically loads from and
@@ -41,43 +44,13 @@ public class ChatbotStore {
    */
   private PersistentStorageAgent persistentStorageAgent;
 
-  /** The in-memory list of Chatbots. */
-  private List<Chatbot> chatbots;
+  /** The in-memory Chatbots. */
+  private Map<UUID, Chatbot> chatbotById;
 
   /** This class is a singleton, so its constructor is private. Call getInstance() instead. */
   private ChatbotStore(PersistentStorageAgent persistentStorageAgent) {
     this.persistentStorageAgent = persistentStorageAgent;
-    chatbots = new ArrayList<>();
-  }
-
-  // TODO make this available for test
-  /** Load a set of randomly-generated Message objects. */
-//  public void loadTestData() {
-//    chatbots.addAll(DefaultDataStore.getInstance().getAllUsers());
-//  }
-
-  List<Chatbot> getChatbots() {
-    return chatbots;
-  }
-
-  public int getChatbotCount() {
-    return chatbots.size();
-  }
-
-  /**
-   * Access the Chatbot object with the given name.
-   *
-   * @return null if name does not match any existing Chatbot.
-   */
-  public Chatbot getChatbot(String name) {
-    // This approach will be pretty slow if we have many chatbots.
-    // TODO change this to map
-    for (Chatbot chatbot : chatbots) {
-      if (chatbot.getName().equals(name)) {
-        return chatbot;
-      }
-    }
-    return null;
+    chatbotById = new HashMap<>();
   }
 
   /**
@@ -86,12 +59,7 @@ public class ChatbotStore {
    * @return null if the UUID does not match any existing Chatbot.
    */
   public Chatbot getChatbot(UUID id) {
-    for (Chatbot chatbot : chatbots) {
-      if (chatbot.getId().equals(id)) {
-        return chatbot;
-      }
-    }
-    return null;
+    return chatbotById.get(id);
   }
 
   /**
@@ -100,17 +68,12 @@ public class ChatbotStore {
    * @return false if the UUID does not match any existing Chatbot.
    */
   public boolean isChatbot(UUID id) {
-    for (Chatbot chatbot : chatbots) {
-      if (chatbot.getId().equals(id)) {
-        return true;
-      }
-    }
-    return false;
+    return chatbotById.containsKey(id);
   }
 
   /** Add a new chatbot to the current set of chatbots known to the application. */
   public void addChatbot(Chatbot chatbot) {
-    chatbots.add(chatbot);
+    chatbotById.put(chatbot.getId(), chatbot);
     persistentStorageAgent.writeThrough(chatbot);
   }
 
@@ -119,6 +82,7 @@ public class ChatbotStore {
    * is loaded from Datastore.
    */
   public void setChatbots(List<Chatbot> chatbots) {
-    this.chatbots = chatbots;
+    this.chatbotById = chatbots.stream()
+        .collect(Collectors.toMap(Chatbot::getId, Function.identity()));
   }
 }

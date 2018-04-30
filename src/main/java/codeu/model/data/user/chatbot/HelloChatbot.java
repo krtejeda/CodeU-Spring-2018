@@ -6,9 +6,9 @@ import java.time.Instant;
 import java.util.UUID;
 
 public class HelloChatbot implements Chatbot {
-  protected final UUID id;
-  protected final String name;
-  protected final Instant creation;
+  private final UUID id;
+  private final String name;
+  private final Instant creation;
 
   public HelloChatbot(
       UUID id,
@@ -27,7 +27,7 @@ public class HelloChatbot implements Chatbot {
 
   @Override
   public String getName() {
-    return name + "Bot";
+    return name;
   }
 
   @Override
