@@ -122,6 +122,6 @@ public class LoginServletTest {
     loginServlet.doPost(mockRequest, mockResponse);
 
     Mockito.verify(mockSession).setAttribute("user", TEST_USERNAME);
-    Mockito.verify(mockResponse).sendRedirect(mockRequest.getRequestURI());
+    Mockito.verify(mockResponse).sendRedirect("/conversations");
   }
 }
