@@ -68,7 +68,7 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
           Conversation conversation = (Conversation) item;
           String author = UserStore.getInstance()
             .getUser(conversation.getOwnerId()).getName();
-	  String creationTime = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
+          String creationTime = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
 	    .withZone(TimeZone.getDefault().toZoneId())
 	    .format(conversation.getCreationTime());
       %>
@@ -88,7 +88,7 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
           Message message = (Message) item;
           String author = UserStore.getInstance()
             .getUser(message.getAuthorId()).getName();
-	  String creationTime = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
+          String creationTime = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
             .withZone(TimeZone.getDefault().toZoneId())
             .format(message.getCreationTime());
           String conversation = ConversationStore.getInstance()
