@@ -31,6 +31,7 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
   </style>
 </head>
 
+
 <body>
   <nav>
     <a id="navTitle" href="/">CodeU Chat App</a>
@@ -41,19 +42,19 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
     %>
       <a href="/profile/<%=user%>"><%= user %></a>
     <% } else { %>
-         <a href="/login">Login</a>
-         <a href="/register">Register</a>
-    <% } %>
-         <a href="/about.jsp">About</a>
-         <a href="/activity">Activity</a>
-         <a href="/testdata">Load Test Data</a>
+      <a href="/login">Login</a>
+      <a href="/register">Register</a>
+    <% } %>	
+    <a href="/about.jsp">About</a>
+    <a href="/activity">Activity</a>
+    <a href="/testdata">Load Test Data</a>
     <%
       if (user != null) {
     %>
       <a href="/login">Logout</a>
     <% } %>
   </nav>
-	
+
   <div id="container">
     <h1>Activity <a href="" style="float: right">&#8635;</a> </h1>
     <p>Here's everything that's happened on the site so far!</p>
@@ -69,8 +70,8 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
           String author = UserStore.getInstance()
             .getUser(conversation.getOwnerId()).getName();
           String creationTime = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
-	    .withZone(TimeZone.getDefault().toZoneId())
-	    .format(conversation.getCreationTime());
+            .withZone(TimeZone.getDefault().toZoneId())
+            .format(conversation.getCreationTime());
       %>
         <strong><%= creationTime %>:</strong> <%= author %> created a new conversation:
           <a href="/chat/<%=conversation.getTitle()%>"> <%= conversation.getTitle() %></a>
@@ -79,8 +80,8 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
           User User = (User) item;
           String author = User.getName();
           String creationTime = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
-	      .withZone(TimeZone.getDefault().toZoneId())
-	      .format(User.getCreationTime());
+            .withZone(TimeZone.getDefault().toZoneId())
+            .format(User.getCreationTime());
       %>
         <strong><%= creationTime %>:</strong> <%= author %> joined!
       <%
