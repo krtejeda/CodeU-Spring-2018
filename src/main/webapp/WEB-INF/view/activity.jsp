@@ -40,27 +40,27 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
 </head>
 
 <body onload="scrollChat()">
-	<nav>
-			<a id="navTitle" href="/">CodeU Chat App</a>
-			<a href="/conversations">Conversations</a>
-			<%
-					Object user = request.getSession().getAttribute("user");
-					if (user!= null) {
-			%>
-					<a href="/profile/<%=user%>"><%= user %></a>
-			<% } else { %>
-					<a href="/login">Login</a>
-					<a href="/register">Register</a>
-			<% } %>
-			<a href="/about.jsp">About</a>
-			<a href="/activity">Activity</a>
-			<a href="/testdata">Load Test Data</a>
-			<%
-					if (user != null) {
-			%>
-					<a href="/login">Logout</a>
-			<% } %>
-	</nav>
+  <nav>
+    <a id="navTitle" href="/">CodeU Chat App</a>
+    <a href="/conversations">Conversations</a>
+    <%
+      Object user = request.getSession().getAttribute("user");
+      if (user!= null) {
+    %>
+      <a href="/profile/<%=user%>"><%= user %></a>
+    <% } else { %>
+      <a href="/login">Login</a>
+      <a href="/register">Register</a>
+    <% } %>	
+    <a href="/about.jsp">About</a>
+    <a href="/activity">Activity</a>
+    <a href="/testdata">Load Test Data</a>
+    <%
+      if (user != null) {
+    %>
+      <a href="/login">Logout</a>
+    <% } %>
+  </nav>
 
   <div id="container">
     <h1>Activity <a href="" style="float: right">&#8635;</a> </h1>
@@ -76,9 +76,9 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
           Conversation conversation = (Conversation) item;
           String author = UserStore.getInstance()
             .getUser(conversation.getOwnerId()).getName();
-				  String creationTime = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
-				    .withZone(TimeZone.getDefault().toZoneId())
-				    .format(conversation.getCreationTime());
+	  String creationTime = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
+	    .withZone(TimeZone.getDefault().toZoneId())
+	    .format(conversation.getCreationTime());
       %>
         <strong><%= creationTime %>:</strong> <%= author %> created a new conversation:
           <a href="/chat/<%=conversation.getTitle()%>"> <%= conversation.getTitle() %></a>
@@ -87,8 +87,8 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
           User User = (User) item;
           String author = User.getName();
           String creationTime = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
-			      .withZone(TimeZone.getDefault().toZoneId())
-			      .format(User.getCreationTime());
+	      .withZone(TimeZone.getDefault().toZoneId())
+	      .format(User.getCreationTime());
       %>
         <strong><%= creationTime %>:</strong> <%= author %> joined!
       <%
@@ -96,9 +96,9 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
           Message message = (Message) item;
           String author = UserStore.getInstance()
             .getUser(message.getAuthorId()).getName();
-				  String creationTime = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
-			      .withZone(TimeZone.getDefault().toZoneId())
-		        .format(message.getCreationTime());
+	  String creationTime = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
+	    .withZone(TimeZone.getDefault().toZoneId())
+            .format(message.getCreationTime());
           String conversation = ConversationStore.getInstance()
             .getConversationWithUUID(message.getConversationId()).getTitle();
       %>
