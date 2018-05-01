@@ -60,6 +60,7 @@
       <br/><br/>
       <button type="submit">Login</button>
     </form>
+    <p><a href="/forgetpassword">Forget Password?</a></p>
   </div>
 </body>
 </html>

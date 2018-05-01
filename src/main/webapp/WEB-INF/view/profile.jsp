@@ -1,12 +1,11 @@
 <%@ page import="codeu.model.data.Conversation" %>
-<%@ page import="codeu.model.data.Message" %>
 <%@ page import="codeu.model.data.User" %>
+<%@ page import="com.google.appengine.repackaged.com.google.common.collect.ImmutableMap" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.time.format.DateTimeFormatter" %>
-<%@ page import="java.time.ZoneId" %>
 <%
 List<Conversation> conversations = (List<Conversation>) request.getAttribute("conversations");
-List<Message> messages = (List<Message>) request.getAttribute("messages");
+ImmutableMap<String, String> messageDisplayTimeToMessageContent =
+    (ImmutableMap<String, String>) request.getAttribute("messageDisplayTimeToMessageContent");
 User owner = (User) request.getAttribute("owner");
 %>
 
@@ -55,7 +54,13 @@ User owner = (User) request.getAttribute("owner");
             <a href="/register">Register</a>
         <% } %>
         <a href="/about.jsp">About</a>
+				<a href="/activity">Activity</a>
         <a href="/testdata">Load Test Data</a>
+        <%
+            if (user != null) {
+        %>
+            <a href="/login">Logout</a>
+        <% } %>
     </nav>
 
     <div id="container">
@@ -119,15 +124,11 @@ User owner = (User) request.getAttribute("owner");
             <div id="chat">
                 <ul>
                     <%
-                        for (Message message : messages) {
-                            String creationTime =
-                                DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
-                                    .withZone(ZoneId.systemDefault())
-                                    .format(message.getCreationTime());
+                        for (String displayTime : messageDisplayTimeToMessageContent.keySet()) {
                     %>
                         <li>
-                            <strong><%= creationTime %>:</strong>
-                            <%= message.getContent() %></li>
+                            <strong><%= displayTime %>:</strong>
+                            <%= messageDisplayTimeToMessageContent.get(displayTime) %></li>
                     <%
                         }
                     %>

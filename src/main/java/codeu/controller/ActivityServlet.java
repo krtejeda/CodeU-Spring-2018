@@ -86,7 +86,8 @@ public class ActivityServlet extends HttpServlet {
     request.getRequestDispatcher("/WEB-INF/view/activity.jsp").forward(request, response);
   }
 
-  private List<Object> sortByCreationTime(List<Conversation> conversations, List<Message> messages, List<User> users) {
+  private List<Object> sortByCreationTime(List<Conversation> conversations, List<Message> messages,
+	    List<User> users) {
     List<Object> activity = new ArrayList<>();
     activity.addAll(conversations);
     activity.addAll(messages);

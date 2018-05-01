@@ -7,6 +7,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,8 +34,12 @@ public class RegisterServletTest {
 
   @Test
   public void testDoGet() throws IOException, ServletException {
+    HttpSession mockSession = Mockito.mock(HttpSession.class);
+    Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
+
     registerServlet.doGet(mockRequest, mockResponse);
 
+    Mockito.verify(mockSession).removeAttribute("user");
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
 
