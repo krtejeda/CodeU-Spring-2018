@@ -23,4 +23,10 @@ public interface Chatbot extends MessageSender {
   default UserGroup group() {
     return UserGroup.BOT;
   }
+
+  enum Type {
+    HELLO;
+  }
+
+  Type getType();
 }

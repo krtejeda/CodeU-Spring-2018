@@ -29,7 +29,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * This class handles all interactions with Google App Engine's Datastore service. On startup it
@@ -111,10 +110,14 @@ public class PersistentDataStore {
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         String name = (String) entity.getProperty("name");
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        Chatbot chatbot = new HelloChatbot(
-            uuid,
-            name,
-            creationTime); // TODO change this to more general chatbot so more than one concrete chatbot is allowed
+        Chatbot.Type type =
+            Enum.valueOf(Chatbot.Type.class, (String) entity.getProperty("type"));
+        Chatbot chatbot =
+            createConcreteChatbotOfType(
+                type,
+                uuid,
+                name,
+                creationTime);
         chatbots.add(chatbot);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -125,6 +128,23 @@ public class PersistentDataStore {
     }
 
     return chatbots;
+  }
+
+  private Chatbot createConcreteChatbotOfType(
+      Chatbot.Type type,
+      UUID id,
+      String name,
+      Instant creationTime)
+  {
+    switch (type) {
+      case HELLO:
+        return new HelloChatbot(
+            id,
+            name,
+            creationTime);
+      default:
+        throw new IllegalArgumentException("Non-existent chatbot type");
+    }
   }
 
   /**
@@ -212,6 +232,7 @@ public class PersistentDataStore {
     chatbotEntity.setProperty("uuid", chatbot.getId().toString());
     chatbotEntity.setProperty("name", chatbot.getName());
     chatbotEntity.setProperty("creation_time", chatbot.getCreationTime().toString());
+    chatbotEntity.setProperty("type", chatbot.getType().toString());
     datastore.put(chatbotEntity);
   }
 

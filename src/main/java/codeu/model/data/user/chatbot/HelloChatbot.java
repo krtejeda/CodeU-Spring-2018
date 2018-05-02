@@ -1,7 +1,6 @@
 package codeu.model.data.user.chatbot;
 
 import codeu.model.data.user.User;
-import codeu.model.data.user.UserGroup;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -10,6 +9,7 @@ public class HelloChatbot implements Chatbot {
   private final UUID id;
   private final String name;
   private final Instant creation;
+  private final Type type = Type.HELLO;
 
   public HelloChatbot(
       UUID id,
@@ -39,5 +39,10 @@ public class HelloChatbot implements Chatbot {
   @Override
   public Optional<String> respondToMessageFrom(User sender, String messageContent) {
     return Optional.of("Hello " + sender.getName() + "!");
+  }
+
+  @Override
+  public Type getType() {
+    return type;
   }
 }
