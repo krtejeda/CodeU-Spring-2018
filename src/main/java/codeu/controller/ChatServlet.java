@@ -20,12 +20,14 @@ import codeu.model.data.user.chatbot.Chatbot;
 import codeu.model.data.user.User;
 import codeu.model.data.user.MessageSender;
 import codeu.model.data.user.chatbot.HelloChatbot;
+import codeu.model.store.basic.ChatbotIdsByConversationId;
 import codeu.model.store.basic.ChatbotStore;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,6 +53,9 @@ public class ChatServlet extends HttpServlet {
   /** Store class that gives access to Chatbots. */
   private ChatbotStore chatbotStore;
 
+  /** Store class that gives access to Chatbot ids in conversation id. */
+  private ChatbotIdsByConversationId chatbotIdsByConversationId;
+
   /** Set up state for handling chat requests. */
   @Override
   public void init() throws ServletException {
@@ -59,6 +64,10 @@ public class ChatServlet extends HttpServlet {
     setMessageStore(MessageStore.getInstance());
     setUserStore(UserStore.getInstance());
     setChatbotStore(ChatbotStore.getInstance());
+    setChatbotIdsByConversationId(ChatbotIdsByConversationId.getInstance(
+        messageStore,
+        conversationStore,
+        chatbotStore));
   }
 
   /**
@@ -92,6 +101,15 @@ public class ChatServlet extends HttpServlet {
    */
   void setChatbotStore(ChatbotStore chatbotStore) {
     this.chatbotStore = chatbotStore;
+  }
+
+  /**
+   * Sets the ChatbotStore used by this servlet.
+   * This function provides a common setup method for use
+   * by the test framework or the servlet's init() function.
+   */
+  void setChatbotIdsByConversationId(ChatbotIdsByConversationId chatbotIdsByConversationId) {
+    this.chatbotIdsByConversationId = chatbotIdsByConversationId;
   }
 
   /**
@@ -162,7 +180,7 @@ public class ChatServlet extends HttpServlet {
     if (!chatbot.isPresent()) {
       chatbot = Optional.of(
           new HelloChatbot(UUID.randomUUID(), "Jarvis", Instant.now()));
-      chatbotStore.addChatbot(chatbot.get());
+      chatbotIdsByConversationId.addChatbotInConversation(chatbot.get(), conversation.getId());
     }
 
     sendMessageToConversation(
@@ -198,12 +216,15 @@ public class ChatServlet extends HttpServlet {
     messageStore.addMessage(message);
   }
 
-  // TODO(Elle) store current members of conversation in Conversation and also update profileServlet
   public Optional<Chatbot> getChatbotInConversation(Conversation conversation) {
-    return messageStore.getMessagesInConversation(conversation.id)
-        .stream()
-        .filter(message -> chatbotStore.isChatbot(message.getAuthorId()))
-        .map(message -> chatbotStore.getChatbot(message.getAuthorId()))
-        .findAny();
+    Collection<UUID> chatbotsInConversation =
+        chatbotIdsByConversationId.getChatbotIdsInConversation(conversation.getId());
+
+    if (!chatbotsInConversation.iterator().hasNext()) {
+      return Optional.empty();
+    }
+    return Optional.of(
+        chatbotStore.getChatbot(
+            chatbotsInConversation.iterator().next()));
   }
 }

@@ -72,7 +72,7 @@ public class ChatbotStore {
   }
 
   /** Add a new chatbot to the current set of chatbots known to the application. */
-  public void addChatbot(Chatbot chatbot) {
+  void addChatbot(Chatbot chatbot) {
     chatbotById.put(chatbot.getId(), chatbot);
     persistentStorageAgent.writeThrough(chatbot);
   }
