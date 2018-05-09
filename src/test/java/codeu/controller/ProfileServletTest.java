@@ -34,8 +34,6 @@ import org.mockito.Mockito;
 public class ProfileServletTest {
 
     private static final String MESSAGE_CREATION_TIME_ISO = "2018-12-04T02:44:50.00Z";
-    private static final String MESSAGE_CREATION_TIME_DISPLAY =
-        "Mon Dec 03 21:44:50 " + getCurrentTimeZone() + " 2018";
     private static final String CONVERSATIONS_REQUEST_ATTRIBUTE = "conversations";
     private static final String OWNER_REQUEST_ATTRIBUTE = "owner";
     private static final String MESSAGE_DISPLAY_REQUEST_ATTRIBUTE =
@@ -89,35 +87,41 @@ public class ProfileServletTest {
 
     @Test
     public void testDoGet_ValidUser() throws IOException, ServletException {
-        User user = mockUser();
-        Conversation conversation = mockConversation();
-        Message message = mockMessage(user, conversation);
+        mockUser();
+        mockConversation();
 
         callDoGet();
 
-        verifyConversation(conversation);
-        verifyOwner(user);
-        verifyMessageDisplayTimeToMessageContent(message);
-        verifyForward();
+        Mockito.verify(mockRequest)
+            .setAttribute(Mockito.eq(CONVERSATIONS_REQUEST_ATTRIBUTE),
+                Mockito.any());
+        Mockito.verify(mockRequest)
+            .setAttribute(Mockito.eq(OWNER_REQUEST_ATTRIBUTE),
+                Mockito.any());
+        Mockito.verify(mockRequest)
+            .setAttribute(
+                Mockito.eq(MESSAGE_DISPLAY_REQUEST_ATTRIBUTE),
+                Mockito.any());
+        Mockito.verify(mockRequestDispatcher)
+            .forward(mockRequest, mockResponse);
     }
 
-    private User mockUser() {
-        String username = "Mary";
-        User user =
-            new User(
-                UUID.randomUUID(),
-                username,
-                username,
-                Instant.now(),
-                UserGroup.REGULAR_USER);
-        Mockito.when(mockRequest.getRequestURI())
-            .thenReturn("/profile/" + username);
-        Mockito.when(mockUserStore.getUser(username))
-            .thenReturn(user);
-        return user;
+    private void mockUser() {
+      String username = "Mary";
+      User user =
+          new User(
+              UUID.randomUUID(),
+              username,
+              username,
+              Instant.now(),
+              UserGroup.REGULAR_USER);
+      Mockito.when(mockRequest.getRequestURI())
+          .thenReturn("/profile/" + username);
+      Mockito.when(mockUserStore.getUser(username))
+          .thenReturn(user);
     }
 
-    private Conversation mockConversation() {
+    private void mockConversation() {
         Conversation conversation =
             new Conversation(
                 UUID.randomUUID(),
@@ -129,7 +133,6 @@ public class ProfileServletTest {
         conversations.add(conversation);
         Mockito.when(mockConversationStore.getAllConversations())
             .thenReturn(conversations);
-        return conversation;
     }
 
     private Message mockMessage(User user, Conversation conversation) {
@@ -153,37 +156,6 @@ public class ProfileServletTest {
             .when(mockProfileServlet)
             .doGet(mockRequest, mockResponse);
         mockProfileServlet.doGet(mockRequest, mockResponse);
-    }
-
-    private void verifyConversation(Conversation conversation) {
-        List<Conversation> conversations = new ArrayList<>();
-        conversations.add(conversation);
-        Mockito.verify(mockRequest)
-            .setAttribute(CONVERSATIONS_REQUEST_ATTRIBUTE, conversations);
-    }
-
-    private void verifyOwner(User owner) {
-        Mockito.verify(mockRequest)
-            .setAttribute(OWNER_REQUEST_ATTRIBUTE, owner);
-    }
-
-    private void verifyMessageDisplayTimeToMessageContent(Message message) {
-        ArgumentCaptor<ImmutableMap<String, String>> messageDisplayTimeToMessageContentCaptor =
-            ArgumentCaptor.forClass(ImmutableMap.class);
-        Mockito.verify(mockRequest)
-            .setAttribute(
-                Mockito.eq(MESSAGE_DISPLAY_REQUEST_ATTRIBUTE),
-                messageDisplayTimeToMessageContentCaptor.capture());
-
-        Assert.assertEquals(
-            message.getContent(),
-            messageDisplayTimeToMessageContentCaptor.getValue()
-                .get(MESSAGE_CREATION_TIME_DISPLAY));
-    }
-
-    private void verifyForward() throws IOException, ServletException {
-        Mockito.verify(mockRequestDispatcher)
-            .forward(mockRequest, mockResponse);
     }
 
     @Test
