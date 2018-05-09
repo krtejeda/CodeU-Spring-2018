@@ -5,7 +5,6 @@ import codeu.model.store.basic.AdminStore;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.user.User;
-import codeu.model.store.basic.ChatbotIdsByConversationId;
 import codeu.model.store.basic.ChatbotStore;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
@@ -38,10 +37,6 @@ public class ServerStartupListener implements ServletContextListener {
       List<Message> messages = PersistentStorageAgent.getInstance().loadMessages();
       MessageStore.getInstance().setMessages(messages);
 
-      ChatbotIdsByConversationId.getInstance(
-          MessageStore.getInstance(),
-          ConversationStore.getInstance(),
-          ChatbotStore.getInstance());
     } catch (PersistentDataStoreException e) {
       System.err.println("Server didn't start correctly. An error occurred during Datastore load!");
       System.err.println("This is usually caused by loading data that's in an invalid format.");

@@ -80,10 +80,10 @@ public class ProfileServlet extends HttpServlet {
     }
 
   /**
-   * Get integration of all messages of {@code user} from message display time to message content.
+   * Get map of all messages of {@code user} from message display time to message content.
    * Display time is in format e.g. "Mon Dec 03 21:44:50 EST 2018"
    * @param user  who sent messages
-   * @return immutable integration from message display time to message content.
+   * @return immutable map from message display time to message content.
    */
   private ImmutableMap<String, String> getMessageDisplayTimeToMessageContentOfUser(User user) {
     return getMessagesOfUser(user)
