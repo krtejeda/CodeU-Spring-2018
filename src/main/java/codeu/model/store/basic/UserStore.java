@@ -158,4 +158,9 @@ public class UserStore {
   public void setUsers(List<User> users) {
     this.users = users;
   }
+
+  /** Access the current set of users known to the application. */
+  public List<User> getAllUsers() {
+    return users;
+  }
 }
