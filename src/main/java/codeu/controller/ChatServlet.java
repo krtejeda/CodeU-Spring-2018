@@ -16,10 +16,10 @@ package codeu.controller;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
-import codeu.model.data.user.chatbot.Chatbot;
-import codeu.model.data.user.User;
 import codeu.model.data.user.MessageSender;
-import codeu.model.data.user.chatbot.HelloChatbot;
+import codeu.model.data.user.User;
+import codeu.model.data.user.chatbot.Chatbot;
+import codeu.model.data.user.chatbot.FirstDialogflowChatbot;
 import codeu.model.store.basic.ChatbotStore;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
@@ -161,7 +161,7 @@ public class ChatServlet extends HttpServlet {
     Optional<Chatbot> chatbot = getChatbotInConversation(conversation);
     if (!chatbot.isPresent()) {
       chatbot = Optional.of(
-          new HelloChatbot(UUID.randomUUID(), "Jarvis", Instant.now()));
+          new FirstDialogflowChatbot(UUID.randomUUID(), "Jarvis", Instant.now()));
       chatbotStore.addChatbot(chatbot.get());
     }
 
