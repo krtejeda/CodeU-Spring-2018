@@ -114,7 +114,7 @@ public class ConversationStore {
 	 * Returns null if UUID corresponds to no known conversation.
 	 */
   public Conversation getConversationByUUID(UUID id) {
-    for (Conversation conversation : conversations) {
+    for (Conversation conversation : conversationByTitle.values()) {
       if (conversation.getId().equals(id)) {
         return conversation;
       }

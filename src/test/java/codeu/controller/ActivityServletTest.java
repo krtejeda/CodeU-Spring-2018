@@ -2,7 +2,8 @@ package codeu.controller;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
-import codeu.model.data.User;
+import codeu.model.data.user.User;
+import codeu.model.data.user.UserGroup;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
@@ -15,11 +16,8 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 public class ActivityServletTest {
@@ -78,7 +76,8 @@ public class ActivityServletTest {
             UUID.randomUUID(),
             "test username",
             "test password",
-            Instant.now().plusSeconds(3)));
+            Instant.now().plusSeconds(3),
+            UserGroup.REGULAR_USER));
 
     Mockito.when(mockConversationStore.getAllConversations()).thenReturn(fakeConversationList);
     Mockito.when(mockMessageStore.getAllMessages()).thenReturn(fakeMessageList);
@@ -115,7 +114,8 @@ public class ActivityServletTest {
             UUID.randomUUID(),
             "test username",
             "test password",
-            Instant.now().plusSeconds(3)));
+            Instant.now().plusSeconds(3),
+            UserGroup.REGULAR_USER));
 
     Mockito.when(mockConversationStore.getAllConversations()).thenReturn(fakeConversationList);
     Mockito.when(mockMessageStore.getAllMessages()).thenReturn(fakeMessageList);
@@ -151,7 +151,8 @@ public class ActivityServletTest {
             UUID.randomUUID(),
             "test username",
             "test password",
-            Instant.now().plusSeconds(3)));
+            Instant.now().plusSeconds(3),
+            UserGroup.REGULAR_USER));
 
     Mockito.when(mockConversationStore.getAllConversations()).thenReturn(fakeConversationList);
     Mockito.when(mockMessageStore.getAllMessages()).thenReturn(fakeMessageList);
@@ -254,7 +255,8 @@ public class ActivityServletTest {
             UUID.randomUUID(),
             "test username",
             "test password",
-            now));
+            now,
+            UserGroup.REGULAR_USER));
 
     Mockito.when(mockConversationStore.getAllConversations()).thenReturn(fakeConversationList);
     Mockito.when(mockMessageStore.getAllMessages()).thenReturn(fakeMessageList);
