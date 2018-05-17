@@ -113,4 +113,9 @@ public class MessageStore {
             (map, message) -> map.put(message.getConversationId(), message),
             (map1, map2) -> map1.putAll(map2));
   }
+
+  /** Access the current set of messages known to the application. */
+  public List<Message> getAllMessages() {
+    return messages;
+  }
 }

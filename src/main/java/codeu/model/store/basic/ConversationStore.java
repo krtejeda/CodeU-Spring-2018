@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 /**
  * Store class that uses in-memory data structures to hold values and automatically loads from and
@@ -107,6 +108,18 @@ public class ConversationStore {
   /** Find and return the Conversation with the given title. */
   public Conversation getConversationWithTitle(String title) {
     return conversationByTitle.get(title);
+  }
+
+  /* Find and return the Conversation with the given UUID.
+	 * Returns null if UUID corresponds to no known conversation.
+	 */
+  public Conversation getConversationByUUID(UUID id) {
+    for (Conversation conversation : conversations) {
+      if (conversation.getId().equals(id)) {
+        return conversation;
+      }
+    }
+    return null;
   }
 
   /** Sets the List of Conversations stored by this ConversationStore. */

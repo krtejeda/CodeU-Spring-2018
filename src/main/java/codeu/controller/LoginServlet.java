@@ -74,8 +74,6 @@ public class LoginServlet extends HttpServlet {
       User user = userStore.getUser(username);
       if(BCrypt.checkpw(password, user.getPassword())) {
         request.getSession().setAttribute("user", username);
-
-        String lastUrl = request.getRequestURI();
         response.sendRedirect("/conversations");
       } else {
         request.setAttribute("error", "Invalid password.");
