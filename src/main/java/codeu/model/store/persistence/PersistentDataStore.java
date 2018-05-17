@@ -16,22 +16,19 @@ package codeu.model.store.persistence;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
-import codeu.model.data.User;
-import codeu.model.store.persistence.PersistentDataStoreException;
+import codeu.model.data.user.User;
+import codeu.model.data.user.UserGroup;
+import codeu.model.data.user.chatbot.Chatbot;
+import codeu.model.data.user.chatbot.HelloChatbot;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.Filter;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * This class handles all interactions with Google App Engine's Datastore service. On startup it
@@ -70,12 +67,18 @@ public class PersistentDataStore {
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         String userName = (String) entity.getProperty("username");
         String password = (String) entity.getProperty("password");
-        String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
         String description = entity.getProperty("description") != null ?
             (String) entity.getProperty("description") :
             User.getDefaultDescription(userName);
-        User user = new User(uuid, userName, password, creationTime, description);
+        UserGroup group = Enum.valueOf(UserGroup.class, (String) entity.getProperty("group"));
+        User user = new User(
+            uuid,
+            userName,
+            password,
+            creationTime,
+            description,
+            group);
         users.add(user);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -86,6 +89,62 @@ public class PersistentDataStore {
     }
 
     return users;
+  }
+
+  /**
+   * Loads all Chatbot objects from the Datastore service and returns them in a List.
+   *
+   * @throws PersistentDataStoreException if an error was detected during the load from the
+   *     Datastore service
+   */
+  public List<Chatbot> loadChatbots() throws PersistentDataStoreException {
+
+    List<Chatbot> chatbots = new ArrayList<>();
+
+    // Retrieve all chatbots from the datastore.
+    Query query = new Query("chatbots");
+    PreparedQuery results = datastore.prepare(query);
+
+    for (Entity entity : results.asIterable()) {
+      try {
+        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+        String name = (String) entity.getProperty("name");
+        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+        Chatbot.Type type =
+            Enum.valueOf(Chatbot.Type.class, (String) entity.getProperty("type"));
+        Chatbot chatbot =
+            createConcreteChatbotOfType(
+                type,
+                uuid,
+                name,
+                creationTime);
+        chatbots.add(chatbot);
+      } catch (Exception e) {
+        // In a production environment, errors should be very rare. Errors which may
+        // occur include network errors, Datastore service errors, authorization errors,
+        // database entity definition mismatches, or service mismatches.
+        throw new PersistentDataStoreException(e);
+      }
+    }
+
+    return chatbots;
+  }
+
+  private Chatbot createConcreteChatbotOfType(
+      Chatbot.Type type,
+      UUID id,
+      String name,
+      Instant creationTime)
+  {
+    switch (type) {
+      case HELLO:
+        return new HelloChatbot(
+            id,
+            name,
+            creationTime);
+      default:
+        throw new IllegalArgumentException("Non-existent chatbot type");
+    }
   }
 
   /**
@@ -163,7 +222,18 @@ public class PersistentDataStore {
     userEntity.setProperty("password", user.getPassword());
     userEntity.setProperty("creation_time", user.getCreationTime().toString());
     userEntity.setProperty("description", user.getDescription().toString());
+    userEntity.setProperty("group", user.group().toString());
     datastore.put(userEntity);
+  }
+
+  /** Write a User object to the Datastore service. */
+  public void writeThrough(Chatbot chatbot) {
+    Entity chatbotEntity = new Entity("chatbots");
+    chatbotEntity.setProperty("uuid", chatbot.getId().toString());
+    chatbotEntity.setProperty("name", chatbot.getName());
+    chatbotEntity.setProperty("creation_time", chatbot.getCreationTime().toString());
+    chatbotEntity.setProperty("type", chatbot.getType().toString());
+    datastore.put(chatbotEntity);
   }
 
   /** Write a Message object to the Datastore service. */

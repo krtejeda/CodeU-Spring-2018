@@ -14,6 +14,8 @@
 
 package codeu.model.data;
 
+import codeu.model.data.user.User;
+import codeu.model.data.user.UserGroup;
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.Assert;
@@ -29,7 +31,7 @@ public class UserTest {
     Instant creation = Instant.now();
     String passwordHash = BCrypt.hashpw("password", BCrypt.gensalt());
 
-    User user = new User(id, name, passwordHash, creation);
+    User user = new User(id, name, passwordHash, creation, UserGroup.REGULAR_USER);
 
     Assert.assertEquals(id, user.getId());
     Assert.assertEquals(name, user.getName());
@@ -46,7 +48,7 @@ public class UserTest {
     String password = "password";
     String description = "test description";
 
-    User user = new User(id, name, password, creation, description);
+    User user = new User(id, name, password, creation, description, UserGroup.REGULAR_USER);
 
     Assert.assertEquals(id, user.getId());
     Assert.assertEquals(name, user.getName());

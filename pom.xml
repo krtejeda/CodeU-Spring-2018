@@ -22,6 +22,17 @@
   <modelVersion>4.0.0</modelVersion>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.google.cloud</groupId>
+        <artifactId>google-cloud-bom</artifactId>
+        <version>0.47.0-alpha</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <groupId>com.codeu.chatapp</groupId>
   <artifactId>chatapp</artifactId>
 
@@ -29,6 +40,9 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <projectId>code-u-team-27</projectId>
+    <sessionId>SESSION_0</sessionId>
+    <contextId>CHATBOT_TEST</contextId>
   </properties>
 
   <dependencies>
@@ -98,6 +112,11 @@
       <groupId>org.mindrot</groupId>
       <artifactId>jbcrypt</artifactId>
       <version>0.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-dialogflow</artifactId>
     </dependency>
 
   </dependencies>

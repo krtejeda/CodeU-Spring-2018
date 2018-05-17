@@ -14,7 +14,7 @@
 
 package codeu.model.store.basic;
 
-import codeu.model.data.User;
+import codeu.model.data.user.User;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +67,10 @@ public class UserStore {
   /** Load a set of randomly-generated Message objects. */
   public void loadTestData() {
     users.addAll(DefaultDataStore.getInstance().getAllUsers());
+  }
+
+  public int getUsersCount() {
+    return users.size();
   }
 
   /**
@@ -145,6 +149,16 @@ public class UserStore {
   public boolean isUserRegistered(String username) {
     for (User user : users) {
       if (user.getName().equals(username)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /** Return true if the given username is known to the application. */
+  public boolean isUserRegistered(UUID id) {
+    for (User user : users) {
+      if (user.getId().equals(id)) {
         return true;
       }
     }

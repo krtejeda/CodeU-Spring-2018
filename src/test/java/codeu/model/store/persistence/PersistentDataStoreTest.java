@@ -2,7 +2,8 @@ package codeu.model.store.persistence;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
-import codeu.model.data.User;
+import codeu.model.data.user.User;
+import codeu.model.data.user.UserGroup;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import java.time.Instant;
@@ -44,7 +45,12 @@ public class PersistentDataStoreTest {
     String passwordOne = "password one";
     String passwordOneHash = BCrypt.hashpw(passwordOne, BCrypt.gensalt());
     Instant creationOne = Instant.ofEpochMilli(1000);
-    User inputUserOne = new User(idOne, nameOne, passwordOneHash, creationOne);
+    User inputUserOne = new User(
+        idOne,
+        nameOne,
+        passwordOneHash,
+        creationOne,
+        UserGroup.REGULAR_USER);
 
     UUID idTwo = UUID.randomUUID();
     String nameTwo = "test_username_two";
@@ -52,7 +58,14 @@ public class PersistentDataStoreTest {
     String passwordTwoHash = BCrypt.hashpw(passwordTwo, BCrypt.gensalt());
     Instant creationTwo = Instant.ofEpochMilli(2000);
     String descriptionTwo = "description two";
-    User inputUserTwo = new User(idTwo, nameTwo, passwordTwoHash, creationTwo, descriptionTwo);
+    User inputUserTwo =
+        new User(
+            idTwo,
+            nameTwo,
+            passwordTwoHash,
+            creationTwo,
+            descriptionTwo,
+            UserGroup.REGULAR_USER);
 
     // save
     persistentDataStore.writeThrough(inputUserOne);

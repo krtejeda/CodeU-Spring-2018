@@ -13,6 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
+<%
+  Boolean isAdmin = (Boolean) request.getAttribute("isAdmin");
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -43,14 +47,25 @@
     <% } %>
   </nav>
 
-  <div id="container">
-    <h1>Load Test Data</h1>
-    <p>This will load a number of users, conversations, and messages for testing
+  <%
+    if (isAdmin) {
+  %>
+    <div id="container">
+      <h1>Load Test Data</h1>
+      <p>This will load a number of users, conversations, and messages for testing
         purposes.</p>
-    <form action="/testdata" method="POST">
-      <button type="submit" value="confirm" name="confirm">Confirm</button>
-      <button type="submit" value="cancel" name="cancel">Do Nothing</button>
-    </form>
-  </div>
+      <form action="/testdata" method="POST">
+        <button type="submit" value="confirm" name="confirm">Confirm</button>
+        <button type="submit" value="cancel" name="cancel">Do Nothing</button>
+      </form>
+    </div>
+  <% } else { %>
+    <%-- unauthorized access --%>
+    <div>
+      <br/><br/>
+      This page is only available to admin users
+    </div>
+  <% } %>
+
 </body>
 </html>

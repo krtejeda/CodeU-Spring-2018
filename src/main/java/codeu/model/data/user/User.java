@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package codeu.model.data;
+package codeu.model.data.user;
 
 import java.time.Instant;
 import java.util.UUID;
 import org.mindrot.jbcrypt.BCrypt;
 
 /** Class representing a registered user. */
-public class User {
+public class User implements MessageSender {
   private final UUID id;
   private final String name;
   private String password;
   private final Instant creation;
   private String description;
+  private UserGroup group;
 
   /**
    * Constructs a new User.
@@ -34,13 +35,22 @@ public class User {
    * @param password the password of this User
    * @param creation the creation time of this User
    * @param description description to show on user's profile page
+   * @param group {@link UserGroup} this user is in
    */
-  public User(UUID id, String name, String password, Instant creation, String description) {
-      this.id = id;
-      this.name = name;
-      this.password = password;
-      this.creation = creation;
-      this.description = description;
+  public User(
+      UUID id,
+      String name,
+      String password,
+      Instant creation,
+      String description,
+      UserGroup group)
+  {
+    this.id = id;
+    this.name = name;
+    this.password = password;
+    this.creation = creation;
+    this.description = description;
+    this.group = group;
   }
 
   /**
@@ -51,8 +61,8 @@ public class User {
    * @param password the password of this User
    * @param creation the creation time of this User
    */
-  public User(UUID id, String name, String password, Instant creation) {
-    this(id, name, password, creation, getDefaultDescription(name));
+  public User(UUID id, String name, String password, Instant creation, UserGroup group) {
+    this(id, name, password, creation, getDefaultDescription(name), group);
   }
 
   /** Returns the ID of this User. */
@@ -65,9 +75,7 @@ public class User {
     return name;
   }
 
-  /**
-   * Returns the password of this User.
-   */
+  /** Returns the password of this User. */
   public String getPassword() {
     return password;
   }
@@ -92,5 +100,13 @@ public class User {
 
   public static String getDefaultDescription(String name) {
     return "Hi, I'm " + name + ".";
+  }
+
+  public void setGroup(UserGroup group) {
+    this.group = group;
+  }
+
+  public UserGroup group() {
+    return group;
   }
 }

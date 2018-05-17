@@ -1,6 +1,7 @@
 package codeu.model.store.persistence;
 
-import codeu.model.data.User;
+import codeu.model.data.user.User;
+import codeu.model.data.user.UserGroup;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
@@ -39,7 +40,8 @@ public class UpdateUserPersistentDatastoreTest {
             UUID.randomUUID(),
             "test_username_one",
             "password one",
-            Instant.ofEpochMilli(1000));
+            Instant.ofEpochMilli(1000),
+            UserGroup.REGULAR_USER);
 
     // save user
     persistentDataStore.writeThrough(user);

@@ -1,8 +1,7 @@
 package codeu.model.store.persistence;
 
-import codeu.model.data.User;
+import codeu.model.data.user.User;
 import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;

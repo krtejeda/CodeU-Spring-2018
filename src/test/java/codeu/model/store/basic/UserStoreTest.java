@@ -1,6 +1,7 @@
 package codeu.model.store.basic;
 
-import codeu.model.data.User;
+import codeu.model.data.user.User;
+import codeu.model.data.user.UserGroup;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -9,7 +10,6 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 public class UserStoreTest {
@@ -18,11 +18,26 @@ public class UserStoreTest {
   private PersistentStorageAgent mockPersistentStorageAgent;
 
   private final User USER_ONE =
-      new User(UUID.randomUUID(), "test_username_one", "password one", Instant.ofEpochMilli(1000));
+      new User(
+          UUID.randomUUID(),
+          "test_username_one",
+          "password one",
+          Instant.ofEpochMilli(1000),
+          UserGroup.REGULAR_USER);
   private final User USER_TWO =
-      new User(UUID.randomUUID(), "test_username_two", "password two", Instant.ofEpochMilli(2000));
+      new User(
+          UUID.randomUUID(),
+          "test_username_two",
+          "password two",
+          Instant.ofEpochMilli(2000),
+          UserGroup.REGULAR_USER);
   private final User USER_THREE =
-      new User(UUID.randomUUID(), "test_username_three", "password three", Instant.ofEpochMilli(3000));
+      new User(
+          UUID.randomUUID(),
+          "test_username_three",
+          "password three",
+          Instant.ofEpochMilli(3000),
+          UserGroup.REGULAR_USER);
 
   @Before
   public void setup() {
@@ -66,7 +81,12 @@ public class UserStoreTest {
 
   @Test
   public void testAddUser() {
-    User inputUser = new User(UUID.randomUUID(), "test_username", "password", Instant.now());
+    User inputUser = new User(
+        UUID.randomUUID(),
+        "test_username",
+        "password",
+        Instant.now(),
+        UserGroup.REGULAR_USER);
 
     userStore.addUser(inputUser);
     User resultUser = userStore.getUser("test_username");
@@ -92,7 +112,8 @@ public class UserStoreTest {
             UUID.randomUUID(),
             "test_username_three",
             "password",
-            Instant.now());
+            Instant.now(),
+            UserGroup.REGULAR_USER);
     String newDescription = "new description";
     userStore = Mockito.mock(UserStore.class);
     Mockito
@@ -148,7 +169,8 @@ public class UserStoreTest {
                 UUID.randomUUID(),
                 "test_username_three",
                 "password",
-                Instant.now());
+                Instant.now(),
+                UserGroup.REGULAR_USER);
     String newPassword = "new password";
     userStore = Mockito.mock(UserStore.class);
     Mockito

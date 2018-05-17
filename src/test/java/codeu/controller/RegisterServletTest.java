@@ -1,6 +1,7 @@
 package codeu.controller;
 
-import codeu.model.data.User;
+import codeu.model.data.user.User;
+import codeu.model.store.basic.AdminStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
@@ -77,10 +78,12 @@ public class RegisterServletTest {
     Mockito.when(mockUserStore.isUserRegistered(newUsername)).thenReturn(false);
     registerServlet.setUserStore(mockUserStore);
 
+    AdminStore mockAdminStore = Mockito.mock(AdminStore.class);
+    registerServlet.setAdminStore(mockAdminStore);
+
     registerServlet.doPost(mockRequest, mockResponse);
 
     ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
-
     Mockito.verify(mockUserStore).addUser(userArgumentCaptor.capture());
     Assert.assertEquals(
         userArgumentCaptor.getValue().getName(),
@@ -90,6 +93,43 @@ public class RegisterServletTest {
         userArgumentCaptor.getValue().getPassword()));
 
     Mockito.verify(mockResponse).sendRedirect("/login");
+  }
 
+  @Test
+  public void testDoPost_FirstUser() throws IOException, ServletException {
+    String newUsername = "new username";
+    String password = "password";
+    Mockito.when(mockRequest.getParameter("username")).thenReturn(newUsername);
+    Mockito.when(mockRequest.getParameter("password")).thenReturn(password);
+
+    UserStore mockUserStore = Mockito.mock(UserStore.class);
+    Mockito.when(mockUserStore.isUserRegistered(newUsername)).thenReturn(false);
+    Mockito.when(mockUserStore.getUsersCount()).thenReturn(0);
+    registerServlet.setUserStore(mockUserStore);
+
+    AdminStore mockAdminStore = Mockito.mock(AdminStore.class);
+    registerServlet.setAdminStore(mockAdminStore);
+
+    registerServlet.doPost(mockRequest, mockResponse);
+
+    ArgumentCaptor<User> userArgumentCaptorForRoot = ArgumentCaptor.forClass(User.class);
+    Mockito.verify(mockAdminStore).setRoot(userArgumentCaptorForRoot.capture());
+    Assert.assertEquals(
+        userArgumentCaptorForRoot.getValue().getName(),
+        newUsername);
+    Assert.assertTrue(BCrypt.checkpw(
+        password,
+        userArgumentCaptorForRoot.getValue().getPassword()));
+
+    ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
+    Mockito.verify(mockUserStore).addUser(userArgumentCaptor.capture());
+    Assert.assertEquals(
+        userArgumentCaptor.getValue().getName(),
+        newUsername);
+    Assert.assertTrue(BCrypt.checkpw(
+        password,
+        userArgumentCaptor.getValue().getPassword()));
+
+    Mockito.verify(mockResponse).sendRedirect("/login");
   }
 }

@@ -1,15 +1,14 @@
 package codeu.controller;
 
+import codeu.model.data.user.UserGroup;
+import codeu.model.store.basic.AdminStore;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import codeu.model.store.basic.UserStore;
-import codeu.model.data.User;
-import codeu.model.store.persistence.PersistentStorageAgent;
-import java.util.ArrayList;
-import java.util.List;
+import codeu.model.data.user.User;
 import java.util.UUID;
 import java.time.Instant;
 import org.mindrot.jbcrypt.BCrypt;
@@ -23,6 +22,8 @@ public class RegisterServlet extends HttpServlet {
    * Store class that gives access to Users.
    */
   private UserStore userStore;
+
+  private AdminStore adminStore;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -48,7 +49,19 @@ public class RegisterServlet extends HttpServlet {
       request.getRequestDispatcher("/WEB-INF/view/register.jsp").forward(request, response);
       return;
     }
-    User user = new User(UUID.randomUUID(), username, passwordHash, Instant.now());
+    User user =
+        new User(
+            UUID.randomUUID(),
+            username,
+            passwordHash,
+            Instant.now(),
+            UserGroup.REGULAR_USER);
+
+    // set first registered user as root
+    if (userStore.getUsersCount() == 0) {
+      adminStore.setRoot(user);
+    }
+
     userStore.addUser(user);
 
     response.sendRedirect("/login");
@@ -62,13 +75,22 @@ public class RegisterServlet extends HttpServlet {
   public void init() throws ServletException {
     super.init();
     setUserStore(UserStore.getInstance());
+    setAdminStore(AdminStore.getInstance());
   }
 
   /**
-   * Sets the UserStore used by this servlet. This function provides a comoon setup method
+   * Sets the UserStore used by this servlet. This function provides a common setup method
    * for use by the test framework or the servlet's init() function.
    */
   void setUserStore(UserStore userStore) {
     this.userStore = userStore;
+  }
+
+  /**
+   * Sets the AdminStore used by this servlet. This function provides a common setup method
+   * for use by the test framework or the servlet's init() function.
+   */
+  void setAdminStore(AdminStore adminStore) {
+    this.adminStore = adminStore;
   }
 }
