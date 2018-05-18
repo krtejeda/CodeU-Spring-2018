@@ -6,7 +6,7 @@ import codeu.model.data.user.User;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
-import com.google.appengine.repackaged.com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
