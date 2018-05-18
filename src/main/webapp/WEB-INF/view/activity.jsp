@@ -28,13 +28,27 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
       height: 500px;
       overflow-y: scroll
     }
+
+		#grad {
+    background: linear-gradient(to bottom right, black, purple);
+    }
+
+		@font-face {
+    font-family: "My Custom Font";
+    src: url("./images/members/AVENGEANCE HEROIC AVENGER.ttf");
+		}
+		test {
+    font-family: "My Custom Font";
+		}
   </style>
 </head>
 
 
 <body>
   <nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
+		<div id="grad">
+      <a id="navTitle" href="/"> <test>Avengers \n Chat</test> </a>
+
     <a href="/conversations">Conversations</a>
     <%
       Object user = request.getSession().getAttribute("user");
@@ -44,7 +58,7 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
     <% } else { %>
       <a href="/login">Login</a>
       <a href="/register">Register</a>
-    <% } %>	
+    <% } %>
     <a href="/about.jsp">About</a>
     <a href="/activity">Activity</a>
     <a href="/testdata">Load Test Data</a>
@@ -53,6 +67,7 @@ List<Object> activity = (List<Object>) request.getAttribute("activity");
     %>
       <a href="/login">Logout</a>
     <% } %>
+	</div>
   </nav>
 
   <div id="container">
