@@ -7,11 +7,10 @@ import codeu.model.data.user.UserGroup;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
-import com.google.appengine.repackaged.com.google.common.collect.ImmutableMap;
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -20,10 +19,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 /**
@@ -144,7 +141,7 @@ public class ProfileServletTest {
                 "some message content",
                 Instant.parse(MESSAGE_CREATION_TIME_ISO)
             );
-        List<Message> messages = Lists.newArrayList(message);
+        List<Message> messages = new ArrayList<>(Arrays.asList(message));
         Mockito
             .when(mockMessageStore.getMessagesInConversation(conversation.getId()))
             .thenReturn(messages);

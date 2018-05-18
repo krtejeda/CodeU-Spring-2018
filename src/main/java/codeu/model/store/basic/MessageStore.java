@@ -16,7 +16,7 @@ package codeu.model.store.basic;
 
 import codeu.model.data.Message;
 import codeu.model.store.persistence.PersistentStorageAgent;
-import com.google.appengine.repackaged.com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.LinkedListMultimap;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
