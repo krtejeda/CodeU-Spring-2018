@@ -9,42 +9,113 @@
       width: 100px;
     }
   </style>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/bootstrap.css">
 </head>
 <body>
 
-  <nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
-    <a href="/conversations">Conversations</a>
-    <%
-      Object user = request.getSession().getAttribute("user");
-      if (user!= null) {
-    %>
-      <a href="/profile/<%=user%>"><%= user %></a>
-    <% } else { %>
-      <a href="/login">Login</a>
-      <a href="/register">Register</a>
-    <% } %>
-    <a href="/about.jsp">About</a>
-    <a href="/activity">Activity</a>
-    <a href="/testdata">Load Test Data</a>
+  <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+    <a id="navTitle"
+       class="navbar-brand"
+       href="/">CodeU Chat App</a>
+    <button class="navbar-toggler collapsed"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarColor01">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="navbar-collapse collapse" id="navbarColor01">
+      <ul class="navbar-nav mr-auto">
+
+        <li class="nav-item">
+          <a class="nav-link" href="/conversations">Conversations</a>
+        </li>
+
+        <%
+          Object user = request.getSession().getAttribute("user");
+          if (user!= null) {
+        %>
+        <li class="nav-item">
+          <a href="/profile/<%=user%>"><%= user %></a>
+        </li>
+        <% } else { %>
+        <li class="nav-item">
+          <a class="nav-link"
+             href="/login">Login <span class="sr-only">(current)</span></a>
+        </li>
+
+        <li class="nav-item active">
+          <a class="nav-link"  href="/register">Register</a>
+        </li>
+        <% } %>
+
+        <li class="nav-item">
+          <a class="nav-link"  href="/about.jsp">About</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"  href="/activity">Activity</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"  href="/testdata">Load Test Data</a>
+        </li>
+
+        <%
+          if (user != null) {
+        %>
+        <li class="nav-item">
+          <a class="nav-link"  href="/login">Logout</a>
+        </li>
+        <% } %>
+
+      </ul>
+
+    </div>
   </nav>
 
-  <div id="container">
-    <h1>Register</h1>
+  <div class="jumbotron"
+       style="width:75%; margin-left:auto; margin-right:auto; margin-top: 75px;">
+    <h2 class="display-4">Register</h2>
 
     <% if(request.getAttribute("error")!=null) { %>
         <h2 style="color:red"><%= request.getAttribute("error") %></h2>
     <% } %>
 
     <form action="/register" method="POST">
-      <label for="username">Username: </label>
-      <input type="text" name="username" id="username">
+      <label for="username"
+             class="form-control-label lead"
+             style="margin-right: 5px;">Username: </label>
+      <input type="text"
+             name="username"
+             id="username"
+             class="form-control"
+             placeholder="username"
+             style="width: 40%;
+                    display: inline;">
       <br/>
-      <label for="password">Password: </label>
-      <input type="password" name ="password" id="password">
+      <label for="password"
+             class="form-control-label lead"
+             style="margin-right: 10px;">Password: </label>
+      <input type="password"
+             name="password"
+             id="password"
+             class="form-control"
+             placeholder="password"
+             style="width: 40%;
+                    display: inline;
+                    margin-right: 10px;">
       <br/><br/>
-      <button type="submit">Submit</button>
+      <button type="submit"
+              class="btn btn-primary">Login</button>
     </form>
+    <br/>
+    <br/>
+    <br/>
   </div>
 </body>
 </html>

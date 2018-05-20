@@ -18,36 +18,76 @@
 <head>
   <title>The Avengers</title>
   <link rel="stylesheet" href="/css/main.css">
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/bootstrap.css">
 </head>
 <body>
-  <nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
-    <a href="/conversations">Conversations</a>
-    <%
-      Object user = request.getSession().getAttribute("user");
-      if (user!= null) {
-    %>
-      <a href="/profile/<%=user%>"><%= user %></a>	
-    <% } else { %>
-      <a href="/login">Login</a>
-      <a href="/register">Register</a>
-    <% } %>
-    <a href="/about.jsp">About</a>
-    <a href="/activity">Activity</a>
-    <a href="/testdata">Load Test Data</a>
-    <%
-      if (user != null) {
-    %>
-      <a href="/login">Logout</a>
-    <% } %>
+  <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+    <a id="navTitle" class="navbar-brand" href="/">CodeU Chat App</a>
+    <button class="navbar-toggler collapsed"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarColor01">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="navbar-collapse collapse" id="navbarColor01">
+      <ul class="navbar-nav mr-auto">
+
+        <li class="nav-item">
+          <a class="nav-link" href="/conversations">Conversations</a>
+        </li>
+
+        <%
+          Object user = request.getSession().getAttribute("user");
+          if (user!= null) {
+        %>
+        <li class="nav-item">
+          <a href="/profile/<%=user%>"><%= user %></a>
+        </li>
+        <% } else { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link"  href="/register">Register</a>
+          </li>
+        <% } %>
+
+        <li class="nav-item active">
+          <a class="nav-link"
+             href="/about.jsp">About <span class="sr-only">(current)</span></a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"  href="/activity">Activity</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"  href="/testdata">Load Test Data</a>
+        </li>
+
+        <%
+          if (user != null) {
+        %>
+        <li class="nav-item">
+          <a class="nav-link"  href="/login">Logout</a>
+        </li>
+        <% } %>
+
+      </ul>
+
+    </div>
   </nav>
 
-  <div id="container">
-    <div
-      style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
-
-      <h1>About Us</h1>
-      <h2>The Avengers: CodeU Spring 2018 Team 27</h2>
+  <div class="jumbotron"
+       style="width:75%; margin-left:auto; margin-right:auto; margin-top: 75px;">
+      <h2 class="display-4">About Us</h2>
+      <h2 class="display5">The Avengers: CodeU Spring 2018 Team 27</h2>
       <p>
         We are a group of Kevin Rugg and four college students, who apparently
         are fans of The Avengers and can't wait to see the new movies.
@@ -123,7 +163,6 @@
         </p>
       </div>
 
-    </div>
   </div>
 </body>
 </html>

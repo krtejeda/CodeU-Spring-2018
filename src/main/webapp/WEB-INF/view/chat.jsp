@@ -33,6 +33,8 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
   <style>
     #chat {
       background-color: white;
+      color: black;
+      padding-top: 2%;
       height: 500px;
       overflow-y: scroll
     }
@@ -45,35 +47,79 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
       chatDiv.scrollTop = chatDiv.scrollHeight;
     };
   </script>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/bootstrap.css">
 </head>
 <body onload="scrollChat()">
 
-  <nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
-    <a href="/conversations">Conversations</a>
-    <%
-      Object user = request.getSession().getAttribute("user");
-      if (user!= null) {
-    %>
-      <a href="/profile/<%=user%>"><%= user %></a>
-    <% } else { %>
-      <a href="/login">Login</a>
-      <a href="/register">Register</a>
-    <% } %>
-    <a href="/about.jsp">About</a>
-    <a href="/activity">Activity</a>
-    <a href="/testdata">Load Test Data</a>
-    <%
-      if (user != null) {
-    %>
-      <a href="/login">Logout</a>
-    <% } %>
+  <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+    <a id="navTitle"
+       class="navbar-brand"
+       href="/">CodeU Chat App <span class="sr-only">(current)</span></a>
+    <button class="navbar-toggler collapsed"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarColor01">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="navbar-collapse collapse" id="navbarColor01">
+      <ul class="navbar-nav mr-auto">
+
+        <li class="nav-item">
+          <a class="nav-link" href="/conversations">Conversations</a>
+        </li>
+
+        <%
+          Object user = request.getSession().getAttribute("user");
+          if (user!= null) {
+        %>
+        <li class="nav-item">
+          <a href="/profile/<%=user%>"><%= user %></a>
+        </li>
+        <% } else { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link"  href="/register">Register</a>
+          </li>
+        <% } %>
+
+        <li class="nav-item">
+          <a class="nav-link"  href="/about.jsp">About</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"  href="/activity">Activity</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"  href="/testdata">Load Test Data</a>
+        </li>
+
+        <%
+          if (user != null) {
+        %>
+        <li class="nav-item">
+          <a class="nav-link"  href="/login">Logout</a>
+        </li>
+        <% } %>
+
+      </ul>
+
+    </div>
   </nav>
 
-  <div id="container">
+  <div class="jumbotron"
+       style="width:75%; margin-left:auto; margin-right:auto; margin-top: 75px;">
 
-    <h1><%= conversation.getTitle() %>
-      <a href="" style="float: right">&#8635;</a></h1>
+    <h2 class="display-4"><%= conversation.getTitle() %>
+      <a href="" style="float: right">&#8635;</a></h2>
 
     <hr/>
 
@@ -108,9 +154,13 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 
     <% if (request.getSession().getAttribute("user") != null) { %>
     <form action="/chat/<%= conversation.getTitle() %>" method="POST">
-        <input type="text" name="message">
-        <br/>
-        <button type="submit">Send</button>
+        <input type="text"
+               name="message"
+               class="form-control"
+               placeholder="Your message goes here"
+               style="margin-bottom: 10px;">
+        <button type="submit"
+                class="btn btn-primary">Send</button>
     </form>
     <% } else { %>
       <p><a href="/login">Login</a> to send a message.</p>
