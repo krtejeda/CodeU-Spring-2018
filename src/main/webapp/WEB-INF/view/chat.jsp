@@ -17,8 +17,13 @@
 <%@ page import="codeu.model.data.Message" %>
 <%@ page import="codeu.model.store.basic.ChatbotStore" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.time.Instant" %>
+<%@ page import="java.util.Date" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.UUID" %>
+<%@ page import="org.joda.time.DateTimeComparator" %>
+<%@ page import="java.util.concurrent.TimeUnit" %>
 <%
 Conversation conversation = (Conversation) request.getAttribute("conversation");
 List<Message> messages = (List<Message>) request.getAttribute("messages");
@@ -30,30 +35,42 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
   <title><%= conversation.getTitle() %></title>
   <link rel="stylesheet" href="/css/main.css" type="text/css">
 
-  <style>
-    #chat {
-      background-color: white;
-      color: black;
-      padding-top: 2%;
-      height: 500px;
-      overflow-y: scroll
-    }
-  </style>
+  <%--<style>--%>
+    <%--#chat {--%>
+      <%--background-color: white;--%>
+      <%--color: black;--%>
+      <%--padding-top: 2%;--%>
+      <%--height: 500px;--%>
+      <%--overflow-y: scroll--%>
+    <%--}--%>
+  <%--</style>--%>
 
-  <script>
-    // scroll the chat div to the bottom
-    function scrollChat() {
-      var chatDiv = document.getElementById('chat');
-      chatDiv.scrollTop = chatDiv.scrollHeight;
-    };
-  </script>
+  <%--<script>--%>
+    <%--// scroll the chat div to the bottom--%>
+    <%--function scrollChat() {--%>
+      <%--var chatDiv = document.getElementById('chat');--%>
+      <%--chatDiv.scrollTop = chatDiv.scrollHeight;--%>
+    <%--};--%>
+  <%--</script>--%>
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  <script src="/js/chat.js"></script>
+  <link rel="stylesheet" href="/css/chat.css" type="text/css">
   <link rel="stylesheet" href="/css/bootstrap.css">
+
+  <script>
+    function scrollToBottom() {
+      console.log("scrolling down");
+      var chatMessages = $('#chat-messages');
+      chatMessages.scrollTop(chatMessages.prop("scrollHeight"));
+    }
+    window.onload = scrollToBottom;
+  </script>
 </head>
-<body onload="scrollChat()">
+<%--<body onload="scrollChat()">--%>
+<body>
 
   <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
     <a id="navTitle"
@@ -123,31 +140,81 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 
     <hr/>
 
-    <div id="chat">
-      <ul>
-    <%
-      for (Message message : messages) {
-        UUID authorId = message.getAuthorId();
-        UserStore userStore = UserStore.getInstance();
-        ChatbotStore chatbotStore = ChatbotStore.getInstance();
-        String author;
-        if (userStore.isUserRegistered(authorId)) {
-          author = userStore.getUser(authorId).getName();
-          %>
-            <li>
-              <strong><a href="/profile/<%=author %>"><%= author %>:</a></strong>
-              <%= message.getContent() %>
-            </li>
-          <%
-        } else if (chatbotStore.isChatbot(authorId)) {
-          author = chatbotStore.getChatbot(authorId).getName();
-          %>
-            <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
-          <%
+    <div id="chat-messages">
+      <%
+        Date dateOfPrevMessage = new Date();
+        for (Message message : messages) {
+          UUID authorId = message.getAuthorId();
+          UserStore userStore = UserStore.getInstance();
+          ChatbotStore chatbotStore = ChatbotStore.getInstance();
+          String author;
+
+          // time sent the message
+          long secondsTilNow =
+                  Instant.now().getEpochSecond() - message.getCreationTime().getEpochSecond();
+          long minutesTilNow = TimeUnit.SECONDS.toMinutes(secondsTilNow);
+          long hoursTilNow = TimeUnit.SECONDS.toHours(secondsTilNow);
+          long daysTilNow = TimeUnit.SECONDS.toDays(secondsTilNow);
+          long monthsTilNow = daysTilNow/30;
+          long yearsTilNow = daysTilNow/365;
+          String timeTilNow =
+            yearsTilNow > 0 ? yearsTilNow + "y" :
+            monthsTilNow > 0 ? monthsTilNow + "mo" :
+            daysTilNow > 0 ? daysTilNow + "d" :
+            hoursTilNow > 0 ? hoursTilNow + "h" :
+            minutesTilNow > 0 ? minutesTilNow + "m" :
+            secondsTilNow + "s";
+
+          // date
+          Date creationDate = Date.from(message.getCreationTime());
+          String formattedDate = new SimpleDateFormat("EEEE, MMMM dd").format(creationDate);
+          boolean showDateLabel =
+            DateTimeComparator.getDateOnlyInstance().compare(
+              dateOfPrevMessage, creationDate) != 0;
+          if (userStore.isUserRegistered(authorId)) {
+            author = userStore.getUser(authorId).getName();
+            %>
+              <div class="message">
+                <%
+                  if (showDateLabel)
+                  {
+                %>
+                  <label><%= formattedDate %></label>
+                <%
+                  }
+                %>
+                <span class="username"
+                ><strong><a href="/profile/<%=author %>"><%= author %>:</a></strong></span>
+                <img src="../../images/profile-pictures/thanos.jpg" />
+                <div class="bubble"
+                  ><%= message.getContent() %><div class="corner"></div><span><%=
+                    timeTilNow %></span></div>
+              </div>
+            <%
+          } else if (chatbotStore.isChatbot(authorId)) {
+            author = chatbotStore.getChatbot(authorId).getName();
+            %>
+              <div class="message">
+                <%
+                  if (showDateLabel)
+                  {
+                %>
+                <label><%= formattedDate %></label>
+                <%
+                  }
+                %>
+                <span class="username"
+                ><strong><a href="/profile/<%=author %>"><%= author %>:</a></strong></span>
+                <img src="../../images/profile-pictures/vision.jpg" />
+                <div class="bubble"
+                  ><%= message.getContent() %><div class="corner"></div><span><%=
+                    timeTilNow %></span></div>
+              </div>
+            <%
+          }
+          dateOfPrevMessage = creationDate;
         }
-      }
-    %>
-      </ul>
+      %>
     </div>
 
     <hr/>
