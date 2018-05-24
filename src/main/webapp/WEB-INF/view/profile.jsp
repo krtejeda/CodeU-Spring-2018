@@ -1,7 +1,7 @@
 <%@ page import="codeu.model.data.Conversation" %>
-<%@ page import="com.google.appengine.repackaged.com.google.common.collect.ImmutableMap" %>
 <%@ page import="codeu.model.data.user.User" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.google.common.collect.ImmutableMap" %>
 <%
 List<Conversation> conversations = (List<Conversation>) request.getAttribute("conversations");
 ImmutableMap<String, String> messageDisplayTimeToMessageContent =
